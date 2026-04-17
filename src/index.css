@@ -76,6 +76,43 @@ html, body, #root {
   pointer-events: none;
 }
 
+.tech-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  border-radius: 14px;
+  background: rgba(10, 11, 18, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid;
+  transition: transform 0.25s cubic-bezier(.2,.8,.2,1), box-shadow 0.25s ease;
+  cursor: pointer;
+  white-space: nowrap;
+  text-decoration: none;
+  user-select: none;
+}
+.tech-chip img {
+  width: 28px;
+  height: 28px;
+  display: block;
+  pointer-events: none;
+}
+.tech-chip-label {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 10px;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  max-width: 0;
+  overflow: hidden;
+  transition: max-width 0.3s ease, opacity 0.2s ease;
+}
+.tech-chip:hover .tech-chip-label {
+  max-width: 140px;
+  padding-right: 4px;
+}
+
 .noise::after {
   content: "";
   position: absolute; inset: 0;
