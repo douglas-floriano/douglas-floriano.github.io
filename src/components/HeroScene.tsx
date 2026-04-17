@@ -10,9 +10,23 @@ import {
   Trail,
   Environment,
 } from '@react-three/drei'
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useEffect, useState } from 'react'
 import type { Mesh, Group } from 'three'
 import * as THREE from 'three'
+
+function useScrollProgress() {
+  const [p, setP] = useState(0)
+  useEffect(() => {
+    const onScroll = () => {
+      const max = window.innerHeight
+      setP(Math.min(1, window.scrollY / max))
+    }
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+  return p
+}
 
 function DistortedCore({ onPointerOver, onPointerOut }: { onPointerOver: () => void; onPointerOut: () => void }) {
   const ref = useRef<Mesh>(null)
@@ -121,11 +135,30 @@ function MouseLight() {
   return <pointLight ref={ref} position={[0, 0, 3]} intensity={1.4} color="#f59e0b" distance={8} />
 }
 
+function ScrollDrivenScene({ progress, children }: { progress: number; children: React.ReactNode }) {
+  const group = useRef<Group>(null)
+  const { camera } = useThree()
+
+  useFrame(() => {
+    if (group.current) {
+      // scroll-driven rotation and scale
+      group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, progress * Math.PI * 0.6, 0.08)
+      group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, progress * 0.45, 0.08)
+      const s = 1 - progress * 0.25
+      group.current.scale.setScalar(THREE.MathUtils.lerp(group.current.scale.x, s, 0.08))
+    }
+    // camera pulls back on scroll
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, 5.5 + progress * 2.5, 0.08)
+  })
+
+  return <group ref={group}>{children}</group>
+}
+
 export default function HeroScene() {
-  const coreHover = useRef<HTMLDivElement | null>(null)
+  const progress = useScrollProgress()
 
   return (
-    <div className="relative w-full h-full" ref={coreHover}>
+    <div className="relative w-full h-full">
       <Canvas
         dpr={[1, 2]}
         camera={{ position: [0, 0, 5.5], fov: 52 }}
@@ -141,22 +174,24 @@ export default function HeroScene() {
         <Environment preset="night" />
         <Stars radius={60} depth={70} count={2500} factor={3} saturation={0} fade speed={1} />
 
-        <Float speed={1.4} rotationIntensity={0.6} floatIntensity={1.2}>
-          <DistortedCore
-            onPointerOver={() => document.body.style.setProperty('cursor', 'grab')}
-            onPointerOut={() => document.body.style.setProperty('cursor', 'auto')}
-          />
-        </Float>
+        <ScrollDrivenScene progress={progress}>
+          <Float speed={1.4} rotationIntensity={0.6} floatIntensity={1.2}>
+            <DistortedCore
+              onPointerOver={() => document.body.style.setProperty('cursor', 'grab')}
+              onPointerOut={() => document.body.style.setProperty('cursor', 'auto')}
+            />
+          </Float>
 
-        <OrbitingRing radius={2.2} speed={0.35} color="#14b8a6" tilt={1.2} />
-        <OrbitingRing radius={2.6} speed={-0.28} color="#10b981" tilt={0.4} />
-        <OrbitingRing radius={3.0} speed={0.22} color="#f59e0b" tilt={-0.6} />
+          <OrbitingRing radius={2.2} speed={0.35} color="#14b8a6" tilt={1.2} />
+          <OrbitingRing radius={2.6} speed={-0.28} color="#10b981" tilt={0.4} />
+          <OrbitingRing radius={3.0} speed={0.22} color="#f59e0b" tilt={-0.6} />
 
-        <Comet radius={2.4} speed={0.6} color="#14b8a6" offset={0} />
-        <Comet radius={2.8} speed={-0.45} color="#f59e0b" offset={2.1} />
-        <Comet radius={3.2} speed={0.35} color="#10b981" offset={4.2} />
+          <Comet radius={2.4} speed={0.6} color="#14b8a6" offset={0} />
+          <Comet radius={2.8} speed={-0.45} color="#f59e0b" offset={2.1} />
+          <Comet radius={3.2} speed={0.35} color="#10b981" offset={4.2} />
 
-        <FloatingParticles count={70} />
+          <FloatingParticles count={70} />
+        </ScrollDrivenScene>
 
         <OrbitControls
           enablePan={false}
@@ -168,7 +203,7 @@ export default function HeroScene() {
         />
       </Canvas>
       <div className="pointer-events-none absolute bottom-3 right-4 text-[10px] font-mono text-white/40 uppercase tracking-wider">
-        arraste · interativo
+        arraste · role · interativo
       </div>
     </div>
   )
