@@ -1,5 +1,8 @@
 import { motion } from 'framer-motion'
+import { Suspense, lazy } from 'react'
 import { SectionHeader } from './Section'
+
+const TechOrb = lazy(() => import('./TechOrb'))
 
 type Tech = { name: string; color: string }
 
@@ -73,6 +76,22 @@ export default function Stack() {
           title={<>Ferramental de <span className="gradient-text">um senior</span>.</>}
           description="Combinações que já coloquei em produção — com ownership de ponta a ponta, não só prova de conceito."
         />
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.9 }}
+          className="relative mb-10 h-[380px] sm:h-[440px] rounded-3xl overflow-hidden glass glow-border"
+        >
+          <Suspense fallback={<div className="w-full h-full bg-gradient-to-br from-brand-violet/10 to-brand-cyan/10 animate-pulse" />}>
+            <TechOrb />
+          </Suspense>
+          <div className="pointer-events-none absolute top-4 left-5 flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-brand-cyan animate-pulse" />
+            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-400">cluster interativo · arraste</span>
+          </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
           {groups.map((g, idx) => (

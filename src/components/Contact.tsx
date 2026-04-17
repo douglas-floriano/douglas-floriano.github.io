@@ -3,7 +3,7 @@ import { Mail, MapPin, Phone } from 'lucide-react'
 import { GithubIcon, LinkedinIcon } from './BrandIcons'
 
 const channels = [
-  { icon: Mail, label: 'Email', value: 'douglas@ibsystem.com.br', href: 'mailto:douglas@ibsystem.com.br' },
+  { icon: Mail, label: 'Email', value: 'douglas198.floriano@hotmail.com', href: 'mailto:douglas198.floriano@hotmail.com' },
   { icon: Phone, label: 'WhatsApp', value: '(16) 99181-6628', href: 'https://wa.me/5516991816628' },
   { icon: LinkedinIcon, label: 'LinkedIn', value: '/in/douglas-costa', href: 'https://www.linkedin.com/in/douglas-costa-b581ab1a1/' },
   { icon: GithubIcon, label: 'GitHub', value: 'douglas-floriano', href: 'https://github.com/douglas-floriano' },

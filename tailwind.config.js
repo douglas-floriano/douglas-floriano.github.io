@@ -17,10 +17,10 @@ export default {
           500: '#272a3a',
         },
         brand: {
-          cyan: '#22d3ee',
-          violet: '#a855f7',
-          pink: '#ec4899',
-          lime: '#a3e635',
+          cyan: '#14b8a6',
+          violet: '#10b981',
+          pink: '#f59e0b',
+          lime: '#facc15',
         },
       },
       animation: {
@@ -38,8 +38,8 @@ export default {
           '50%': { transform: 'translateY(-12px)' },
         },
         'glow': {
-          '0%': { 'box-shadow': '0 0 20px rgba(168,85,247,0.25)' },
-          '100%': { 'box-shadow': '0 0 40px rgba(34,211,238,0.45)' },
+          '0%': { 'box-shadow': '0 0 20px rgba(16,185,129,0.25)' },
+          '100%': { 'box-shadow': '0 0 40px rgba(20,184,166,0.45)' },
         },
       },
     },

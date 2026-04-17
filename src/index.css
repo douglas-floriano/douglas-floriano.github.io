@@ -22,7 +22,7 @@ html, body, #root {
 * { box-sizing: border-box; }
 
 ::selection {
-  background: rgba(168, 85, 247, 0.35);
+  background: rgba(16, 185, 129, 0.35);
   color: #fff;
 }
 
@@ -30,12 +30,12 @@ html, body, #root {
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: #05060a; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #a855f7, #22d3ee);
+  background: linear-gradient(180deg, #10b981, #14b8a6);
   border-radius: 10px;
 }
 
 .gradient-text {
-  background: linear-gradient(90deg, #22d3ee, #a855f7, #ec4899, #22d3ee);
+  background: linear-gradient(90deg, #14b8a6, #10b981, #f59e0b, #14b8a6);
   background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -45,8 +45,8 @@ html, body, #root {
 
 .grid-bg {
   background-image:
-    linear-gradient(rgba(168,85,247,0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34,211,238,0.07) 1px, transparent 1px);
+    linear-gradient(rgba(16,185,129,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(20,184,166,0.07) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
 }
@@ -67,7 +67,7 @@ html, body, #root {
   inset: -1px;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(34,211,238,0.55), rgba(168,85,247,0.55), rgba(236,72,153,0.55));
+  background: linear-gradient(135deg, rgba(20,184,166,0.55), rgba(16,185,129,0.55), rgba(245,158,11,0.55));
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
