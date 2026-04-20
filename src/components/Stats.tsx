@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react'
 
 const stats = [
   { value: 10, suffix: '+', label: 'Anos de experiência' },
-  { value: 3, suffix: '', label: 'SaaS em produção' },
+  { value: 5, suffix: '', label: 'Produtos em produção' },
   { value: 14, suffix: '', label: 'Stacks dominadas' },
   { value: 99.9, suffix: '%', label: 'Uptime das apps' },
 ]
