@@ -1,112 +1,8 @@
 import { useRef, useState, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Text, Billboard } from '@react-three/drei'
+import { Text } from '@react-three/drei'
 import * as THREE from 'three'
 import type { Group, Mesh, PointLight } from 'three'
-
-function useStylizedFaceTexture() {
-  return useMemo(() => {
-    const c = document.createElement('canvas')
-    c.width = 512
-    c.height = 512
-    const ctx = c.getContext('2d')!
-
-    // skin background
-    ctx.fillStyle = '#c89272'
-    ctx.fillRect(0, 0, 512, 512)
-
-    // face shading (slightly darker on sides)
-    const grad = ctx.createRadialGradient(256, 280, 80, 256, 280, 280)
-    grad.addColorStop(0, 'rgba(0,0,0,0)')
-    grad.addColorStop(1, 'rgba(0,0,0,0.25)')
-    ctx.fillStyle = grad
-    ctx.fillRect(0, 0, 512, 512)
-
-    // hair (short, dark) — a curved shape on top
-    ctx.fillStyle = '#1f1410'
-    ctx.beginPath()
-    ctx.moveTo(90, 180)
-    ctx.quadraticCurveTo(100, 70, 256, 60)
-    ctx.quadraticCurveTo(412, 70, 422, 180)
-    ctx.quadraticCurveTo(400, 140, 330, 150)
-    ctx.quadraticCurveTo(256, 100, 182, 150)
-    ctx.quadraticCurveTo(112, 140, 90, 180)
-    ctx.closePath()
-    ctx.fill()
-
-    // eyebrows
-    ctx.fillStyle = '#2a1a10'
-    ctx.beginPath(); ctx.ellipse(180, 220, 34, 8, -0.05, 0, Math.PI * 2); ctx.fill()
-    ctx.beginPath(); ctx.ellipse(332, 220, 34, 8, 0.05, 0, Math.PI * 2); ctx.fill()
-
-    // round glasses — frames
-    ctx.strokeStyle = '#0b1220'
-    ctx.lineWidth = 8
-    ctx.beginPath(); ctx.arc(180, 255, 52, 0, Math.PI * 2); ctx.stroke()
-    ctx.beginPath(); ctx.arc(332, 255, 52, 0, Math.PI * 2); ctx.stroke()
-    // bridge
-    ctx.beginPath(); ctx.moveTo(228, 255); ctx.lineTo(284, 255); ctx.stroke()
-    // glass reflection tint
-    ctx.fillStyle = 'rgba(56, 189, 248, 0.18)'
-    ctx.beginPath(); ctx.arc(180, 255, 48, 0, Math.PI * 2); ctx.fill()
-    ctx.beginPath(); ctx.arc(332, 255, 48, 0, Math.PI * 2); ctx.fill()
-    // reflection highlights
-    ctx.fillStyle = 'rgba(255,255,255,0.55)'
-    ctx.beginPath(); ctx.ellipse(160, 235, 12, 6, -0.7, 0, Math.PI * 2); ctx.fill()
-    ctx.beginPath(); ctx.ellipse(312, 235, 12, 6, -0.7, 0, Math.PI * 2); ctx.fill()
-
-    // eyes (behind glasses)
-    ctx.fillStyle = '#ffffff'
-    ctx.beginPath(); ctx.arc(180, 258, 14, 0, Math.PI * 2); ctx.fill()
-    ctx.beginPath(); ctx.arc(332, 258, 14, 0, Math.PI * 2); ctx.fill()
-    ctx.fillStyle = '#3d2817'
-    ctx.beginPath(); ctx.arc(183, 260, 7, 0, Math.PI * 2); ctx.fill()
-    ctx.beginPath(); ctx.arc(335, 260, 7, 0, Math.PI * 2); ctx.fill()
-    ctx.fillStyle = '#0b1220'
-    ctx.beginPath(); ctx.arc(183, 261, 4, 0, Math.PI * 2); ctx.fill()
-    ctx.beginPath(); ctx.arc(335, 261, 4, 0, Math.PI * 2); ctx.fill()
-
-    // nose
-    ctx.strokeStyle = 'rgba(90, 50, 30, 0.4)'
-    ctx.lineWidth = 3
-    ctx.beginPath()
-    ctx.moveTo(256, 270)
-    ctx.quadraticCurveTo(248, 320, 256, 340)
-    ctx.quadraticCurveTo(264, 350, 272, 340)
-    ctx.stroke()
-
-    // mouth (smile)
-    ctx.strokeStyle = '#3d1f12'
-    ctx.lineWidth = 5
-    ctx.beginPath()
-    ctx.arc(256, 380, 42, 0.15 * Math.PI, 0.85 * Math.PI)
-    ctx.stroke()
-    // lips tint
-    ctx.strokeStyle = 'rgba(160, 60, 50, 0.5)'
-    ctx.lineWidth = 3
-    ctx.beginPath()
-    ctx.arc(256, 378, 40, 0.18 * Math.PI, 0.82 * Math.PI)
-    ctx.stroke()
-
-    // beard/stubble hint
-    ctx.fillStyle = 'rgba(31, 20, 16, 0.22)'
-    ctx.beginPath()
-    ctx.ellipse(256, 420, 90, 28, 0, 0, Math.PI)
-    ctx.fill()
-
-    // cheek blush
-    ctx.fillStyle = 'rgba(200, 90, 70, 0.18)'
-    ctx.beginPath(); ctx.ellipse(140, 340, 30, 18, 0, 0, Math.PI * 2); ctx.fill()
-    ctx.beginPath(); ctx.ellipse(372, 340, 30, 18, 0, 0, Math.PI * 2); ctx.fill()
-
-    const t = new THREE.CanvasTexture(c)
-    t.colorSpace = THREE.SRGBColorSpace
-    t.minFilter = THREE.LinearFilter
-    t.magFilter = THREE.LinearFilter
-    t.needsUpdate = true
-    return t
-  }, [])
-}
 
 const DESK_Y = -1.79
 const DESK_TOP = DESK_Y + 0.05
@@ -158,8 +54,135 @@ function Desk() {
   )
 }
 
+function Head() {
+  const SKIN = '#c89272'
+  const HAIR = '#1f1410'
+  const head = useRef<Group>(null)
+
+  useFrame((state) => {
+    if (!head.current) return
+    const t = state.clock.elapsedTime
+    head.current.rotation.y = Math.sin(t * 0.7) * 0.18
+    head.current.rotation.x = Math.sin(t * 0.5) * 0.05
+  })
+
+  return (
+    <group ref={head} position={[0, 0.88, 0]}>
+      {/* head sphere (slightly egg-shaped) */}
+      <mesh scale={[1, 1.12, 1]}>
+        <sphereGeometry args={[0.22, 32, 32]} />
+        <meshStandardMaterial color={SKIN} roughness={0.8} metalness={0} />
+      </mesh>
+
+      {/* hair cap (hemisphere covering top + back) */}
+      <mesh position={[0, 0.03, -0.01]}>
+        <sphereGeometry args={[0.235, 32, 32, 0, Math.PI * 2, 0, Math.PI * 0.52]} />
+        <meshStandardMaterial color={HAIR} roughness={0.9} />
+      </mesh>
+
+      {/* ears */}
+      <mesh position={[-0.215, 0, 0]} scale={[0.5, 1, 1]}>
+        <sphereGeometry args={[0.04, 12, 12]} />
+        <meshStandardMaterial color={SKIN} roughness={0.8} />
+      </mesh>
+      <mesh position={[0.215, 0, 0]} scale={[0.5, 1, 1]}>
+        <sphereGeometry args={[0.04, 12, 12]} />
+        <meshStandardMaterial color={SKIN} roughness={0.8} />
+      </mesh>
+
+      {/* eyebrows */}
+      <mesh position={[-0.08, 0.06, 0.2]} rotation={[0, 0, -0.05]}>
+        <boxGeometry args={[0.07, 0.012, 0.01]} />
+        <meshStandardMaterial color="#2a1a10" />
+      </mesh>
+      <mesh position={[0.08, 0.06, 0.2]} rotation={[0, 0, 0.05]}>
+        <boxGeometry args={[0.07, 0.012, 0.01]} />
+        <meshStandardMaterial color="#2a1a10" />
+      </mesh>
+
+      {/* eyes — white sclera */}
+      <mesh position={[-0.08, 0.015, 0.205]}>
+        <sphereGeometry args={[0.028, 16, 16]} />
+        <meshBasicMaterial color="#ffffff" />
+      </mesh>
+      <mesh position={[0.08, 0.015, 0.205]}>
+        <sphereGeometry args={[0.028, 16, 16]} />
+        <meshBasicMaterial color="#ffffff" />
+      </mesh>
+      {/* iris (brown) */}
+      <mesh position={[-0.08, 0.013, 0.228]}>
+        <sphereGeometry args={[0.014, 12, 12]} />
+        <meshBasicMaterial color="#3d2817" />
+      </mesh>
+      <mesh position={[0.08, 0.013, 0.228]}>
+        <sphereGeometry args={[0.014, 12, 12]} />
+        <meshBasicMaterial color="#3d2817" />
+      </mesh>
+      {/* pupil */}
+      <mesh position={[-0.08, 0.013, 0.238]}>
+        <sphereGeometry args={[0.006, 8, 8]} />
+        <meshBasicMaterial color="#0b1220" />
+      </mesh>
+      <mesh position={[0.08, 0.013, 0.238]}>
+        <sphereGeometry args={[0.006, 8, 8]} />
+        <meshBasicMaterial color="#0b1220" />
+      </mesh>
+
+      {/* round glasses — torus frames */}
+      <mesh position={[-0.08, 0.015, 0.22]}>
+        <torusGeometry args={[0.055, 0.008, 12, 32]} />
+        <meshStandardMaterial color="#0b1220" metalness={0.7} roughness={0.3} />
+      </mesh>
+      <mesh position={[0.08, 0.015, 0.22]}>
+        <torusGeometry args={[0.055, 0.008, 12, 32]} />
+        <meshStandardMaterial color="#0b1220" metalness={0.7} roughness={0.3} />
+      </mesh>
+      {/* bridge */}
+      <mesh position={[0, 0.015, 0.22]}>
+        <boxGeometry args={[0.055, 0.008, 0.008]} />
+        <meshStandardMaterial color="#0b1220" metalness={0.7} roughness={0.3} />
+      </mesh>
+      {/* temple arms */}
+      <mesh position={[-0.14, 0.015, 0.17]} rotation={[0, -0.4, 0]}>
+        <boxGeometry args={[0.09, 0.008, 0.008]} />
+        <meshStandardMaterial color="#0b1220" metalness={0.7} roughness={0.3} />
+      </mesh>
+      <mesh position={[0.14, 0.015, 0.17]} rotation={[0, 0.4, 0]}>
+        <boxGeometry args={[0.09, 0.008, 0.008]} />
+        <meshStandardMaterial color="#0b1220" metalness={0.7} roughness={0.3} />
+      </mesh>
+      {/* glass lenses (subtle tint) */}
+      <mesh position={[-0.08, 0.015, 0.218]}>
+        <circleGeometry args={[0.047, 24]} />
+        <meshBasicMaterial color="#38bdf8" transparent opacity={0.18} toneMapped={false} />
+      </mesh>
+      <mesh position={[0.08, 0.015, 0.218]}>
+        <circleGeometry args={[0.047, 24]} />
+        <meshBasicMaterial color="#38bdf8" transparent opacity={0.18} toneMapped={false} />
+      </mesh>
+
+      {/* nose */}
+      <mesh position={[0, -0.035, 0.22]} rotation={[0.1, 0, 0]}>
+        <coneGeometry args={[0.018, 0.07, 12]} />
+        <meshStandardMaterial color={SKIN} roughness={0.8} />
+      </mesh>
+
+      {/* mouth (smile) — thin torus segment */}
+      <mesh position={[0, -0.105, 0.2]} rotation={[0, 0, 0]}>
+        <torusGeometry args={[0.04, 0.006, 8, 16, Math.PI]} />
+        <meshStandardMaterial color="#6b2e24" roughness={0.5} />
+      </mesh>
+
+      {/* beard/stubble — darker patch on chin */}
+      <mesh position={[0, -0.14, 0.18]} scale={[1.3, 0.6, 0.5]}>
+        <sphereGeometry args={[0.06, 16, 16]} />
+        <meshStandardMaterial color="#3d2817" roughness={0.95} transparent opacity={0.45} />
+      </mesh>
+    </group>
+  )
+}
+
 function Character() {
-  const faceTex = useStylizedFaceTexture()
   const SKIN = '#c89272'
   const SHIRT = '#1e3a8a'
 
@@ -181,24 +204,8 @@ function Character() {
         <meshStandardMaterial color={SKIN} roughness={0.75} />
       </mesh>
 
-      {/* head — billboarded photo always facing camera for max fidelity */}
-      <Billboard position={[0, 0.85, 0]} follow lockX={false} lockY={false} lockZ={false}>
-        {/* soft glow halo behind */}
-        <mesh position={[0, 0, -0.02]}>
-          <circleGeometry args={[0.42, 32]} />
-          <meshBasicMaterial color="#1e40af" transparent opacity={0.35} toneMapped={false} />
-        </mesh>
-        {/* photo face */}
-        <mesh position={[0, 0, 0]}>
-          <planeGeometry args={[0.7, 0.7]} />
-          <meshBasicMaterial map={faceTex} toneMapped={false} />
-        </mesh>
-        {/* subtle cyan rim */}
-        <mesh position={[0, 0, -0.01]}>
-          <ringGeometry args={[0.36, 0.39, 48]} />
-          <meshBasicMaterial color="#38bdf8" transparent opacity={0.55} toneMapped={false} />
-        </mesh>
-      </Billboard>
+      {/* head (3D geometry) */}
+      <Head />
 
       {/* arms reaching to keyboard */}
       <mesh position={[-0.33, -0.1, 0.25]} rotation={[0.9, 0, 0.15]}>
