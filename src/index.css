@@ -78,18 +78,26 @@ html, body, #root {
 
 .tech-chip {
   position: relative;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 14px;
-  border-radius: 18px;
-  background: rgba(10, 11, 18, 0.9);
+  padding: 12px;
+  border-radius: 16px;
+  background: rgba(10, 11, 18, 0.92);
   backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.14);
   transition: transform 0.25s cubic-bezier(.2,.8,.2,1), box-shadow 0.25s ease, border-color 0.25s ease;
   cursor: pointer;
   text-decoration: none;
   user-select: none;
+  width: 64px;
+  height: 64px;
+  box-sizing: border-box;
+}
+@media (max-width: 640px) {
+  .tech-chip { width: 56px; height: 56px; padding: 10px; }
+  .tech-chip img { width: 36px !important; height: 36px !important; }
 }
 .tech-chip:hover {
   border-color: rgba(20, 184, 166, 0.9);

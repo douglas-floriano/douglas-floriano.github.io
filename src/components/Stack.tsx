@@ -82,7 +82,7 @@ export default function Stack() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.9 }}
-          className="relative mb-10 h-[380px] sm:h-[440px] rounded-3xl overflow-hidden glass glow-border"
+          className="relative mb-10 h-[420px] sm:h-[480px] rounded-3xl overflow-hidden glass glow-border touch-none"
         >
           <Suspense fallback={<div className="w-full h-full bg-gradient-to-br from-brand-violet/10 to-brand-cyan/10 animate-pulse" />}>
             <TechOrb />

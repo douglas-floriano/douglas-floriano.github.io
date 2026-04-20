@@ -53,18 +53,20 @@ export default function Infra() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-60px' }}
             transition={{ duration: 0.6 }}
-            className="mt-10 glass glow-border rounded-2xl p-6 font-mono text-sm text-gray-300 overflow-x-auto"
+            className="mt-10 glass glow-border rounded-2xl p-4 sm:p-6 font-mono text-gray-300"
           >
             <div className="text-xs text-brand-cyan mb-3">~ fluxo de deploy típico</div>
-            <pre className="leading-relaxed whitespace-pre">
+            <div className="overflow-x-auto -mx-4 sm:-mx-6 px-4 sm:px-6">
+              <pre className="leading-relaxed whitespace-pre text-[11px] sm:text-sm min-w-max">
 {`git push origin main
   ─► GitHub Actions: build php-fpm + nginx
       ─► push para ECR
           ─► update task-definition
-              ─► ECS rolling deploy (cluster WalletLote)
+              ─► ECS rolling deploy (WalletLote)
                   ─► CloudFront invalidation
                       ─► 🟢 produção atualizada`}
-            </pre>
+              </pre>
+            </div>
           </motion.div>
         </div>
       </div>

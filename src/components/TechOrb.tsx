@@ -41,7 +41,7 @@ function fibonacciSphere(samples: number, radius: number) {
 
 function TechChip({ tech }: { tech: Tech }) {
   return (
-    <Html center distanceFactor={3.6} zIndexRange={[20, 0]}>
+    <Html center distanceFactor={2.6} zIndexRange={[100, 0]} style={{ pointerEvents: 'auto' }}>
       <a
         href={tech.url}
         target="_blank"
@@ -49,7 +49,16 @@ function TechChip({ tech }: { tech: Tech }) {
         className="tech-chip"
         aria-label={tech.name}
       >
-        <img src={tech.icon} alt={tech.name} draggable={false} />
+        <img
+          src={tech.icon}
+          alt={tech.name}
+          draggable={false}
+          loading="eager"
+          onError={(e) => {
+            ;(e.currentTarget as HTMLImageElement).style.background = '#14b8a6'
+            ;(e.currentTarget as HTMLImageElement).style.borderRadius = '50%'
+          }}
+        />
         <span className="tech-chip-label">{tech.name}</span>
       </a>
     </Html>
@@ -58,7 +67,7 @@ function TechChip({ tech }: { tech: Tech }) {
 
 function TechCluster() {
   const group = useRef<Group>(null)
-  const positions = useMemo(() => fibonacciSphere(techs.length, 2.6), [])
+  const positions = useMemo(() => fibonacciSphere(techs.length, 2.3), [])
 
   useFrame((_, d) => {
     if (!group.current) return
@@ -98,7 +107,7 @@ function TechCluster() {
 
 export default function TechOrb() {
   return (
-    <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 7], fov: 50 }} gl={{ antialias: true, alpha: true }}>
+    <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 6.2], fov: 55 }} gl={{ antialias: true, alpha: true }}>
       <ambientLight intensity={0.5} />
       <pointLight position={[5, 5, 5]} intensity={1.3} color="#14b8a6" />
       <pointLight position={[-5, -3, 2]} intensity={1.1} color="#f59e0b" />
