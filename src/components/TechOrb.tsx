@@ -55,7 +55,7 @@ function TechChip({ tech }: { tech: Tech }) {
           draggable={false}
           loading="eager"
           onError={(e) => {
-            ;(e.currentTarget as HTMLImageElement).style.background = '#14b8a6'
+            ;(e.currentTarget as HTMLImageElement).style.background = '#38bdf8'
             ;(e.currentTarget as HTMLImageElement).style.borderRadius = '50%'
           }}
         />
@@ -84,14 +84,14 @@ function TechCluster() {
           metalness={0.8}
           clearcoat={1}
           clearcoatRoughness={0.1}
-          emissive="#10b981"
+          emissive="#1e40af"
           emissiveIntensity={0.2}
           transparent
           opacity={0.55}
         />
       </Sphere>
       <Sphere args={[1.9, 32, 32]}>
-        <meshBasicMaterial color="#14b8a6" wireframe transparent opacity={0.1} />
+        <meshBasicMaterial color="#38bdf8" wireframe transparent opacity={0.1} />
       </Sphere>
 
       {techs.map((t, i) => (
@@ -109,7 +109,7 @@ export default function TechOrb() {
   return (
     <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 6.2], fov: 55 }} gl={{ antialias: true, alpha: true }}>
       <ambientLight intensity={0.5} />
-      <pointLight position={[5, 5, 5]} intensity={1.3} color="#14b8a6" />
+      <pointLight position={[5, 5, 5]} intensity={1.3} color="#38bdf8" />
       <pointLight position={[-5, -3, 2]} intensity={1.1} color="#f59e0b" />
       <Environment preset="night" />
       <TechCluster />

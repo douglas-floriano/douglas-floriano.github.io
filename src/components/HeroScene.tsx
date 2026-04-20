@@ -49,8 +49,8 @@ function DistortedCore({ onPointerOver, onPointerOut }: { onPointerOver: () => v
       onPointerOut={onPointerOut}
     >
       <MeshDistortMaterial
-        color="#10b981"
-        emissive="#14b8a6"
+        color="#1e40af"
+        emissive="#38bdf8"
         emissiveIntensity={0.45}
         roughness={0.1}
         metalness={0.85}
@@ -102,7 +102,7 @@ function FloatingParticles({ count = 60 }: { count?: number }) {
           (Math.random() - 0.5) * 6,
         ] as [number, number, number],
         scale: Math.random() * 0.04 + 0.015,
-        color: ['#14b8a6', '#10b981', '#f59e0b', '#facc15'][Math.floor(Math.random() * 4)],
+        color: ['#38bdf8', '#1e40af', '#f59e0b', '#facc15'][Math.floor(Math.random() * 4)],
       })),
     [count],
   )
@@ -166,9 +166,9 @@ export default function HeroScene() {
       >
         <color attach="background" args={[0, 0, 0]} />
         <ambientLight intensity={0.3} />
-        <pointLight position={[5, 5, 5]} intensity={1.2} color="#14b8a6" />
+        <pointLight position={[5, 5, 5]} intensity={1.2} color="#38bdf8" />
         <pointLight position={[-5, -3, 2]} intensity={1} color="#f59e0b" />
-        <pointLight position={[0, 3, -5]} intensity={0.6} color="#10b981" />
+        <pointLight position={[0, 3, -5]} intensity={0.6} color="#1e40af" />
         <MouseLight />
 
         <Environment preset="night" />
@@ -182,13 +182,13 @@ export default function HeroScene() {
             />
           </Float>
 
-          <OrbitingRing radius={2.2} speed={0.35} color="#14b8a6" tilt={1.2} />
-          <OrbitingRing radius={2.6} speed={-0.28} color="#10b981" tilt={0.4} />
+          <OrbitingRing radius={2.2} speed={0.35} color="#38bdf8" tilt={1.2} />
+          <OrbitingRing radius={2.6} speed={-0.28} color="#1e40af" tilt={0.4} />
           <OrbitingRing radius={3.0} speed={0.22} color="#f59e0b" tilt={-0.6} />
 
-          <Comet radius={2.4} speed={0.6} color="#14b8a6" offset={0} />
+          <Comet radius={2.4} speed={0.6} color="#38bdf8" offset={0} />
           <Comet radius={2.8} speed={-0.45} color="#f59e0b" offset={2.1} />
-          <Comet radius={3.2} speed={0.35} color="#10b981" offset={4.2} />
+          <Comet radius={3.2} speed={0.35} color="#1e40af" offset={4.2} />
 
           <FloatingParticles count={70} />
         </ScrollDrivenScene>

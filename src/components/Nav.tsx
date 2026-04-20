@@ -33,7 +33,7 @@ export default function Nav() {
             <span className="hidden sm:inline text-white text-sm lg:text-base">Douglas Floriano</span>
           </a>
 
-          <ul className="hidden xl:flex items-center gap-1">
+          <ul className="hidden lg:flex items-center gap-1">
             {links.map((l) => (
               <li key={l.href}>
                 <a
@@ -46,17 +46,10 @@ export default function Nav() {
             ))}
           </ul>
 
-          <a
-            href="#contato"
-            className="hidden xl:inline-flex items-center text-sm px-4 py-1.5 rounded-full bg-gradient-to-r from-brand-cyan to-brand-violet text-ink-900 font-semibold whitespace-nowrap hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-shadow"
-          >
-            Vamos conversar
-          </a>
-
           <button
             aria-label="Abrir menu"
             onClick={() => setOpen((v) => !v)}
-            className="xl:hidden inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition shrink-0"
+            className="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition shrink-0"
           >
             {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
@@ -70,7 +63,7 @@ export default function Nav() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-20 left-1/2 z-40 -translate-x-1/2 w-[min(420px,92vw)] xl:hidden"
+            className="fixed top-20 left-1/2 z-40 -translate-x-1/2 w-[min(420px,92vw)] lg:hidden"
           >
             <div className="glass glow-border rounded-2xl p-4">
               <ul className="flex flex-col gap-1">

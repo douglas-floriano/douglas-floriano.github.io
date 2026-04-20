@@ -39,7 +39,7 @@ export default function CursorGlow() {
       className="pointer-events-none fixed top-0 left-0 z-0 h-[400px] w-[400px] rounded-full opacity-70"
       style={{
         background:
-          'radial-gradient(closest-side, rgba(20,184,166,0.25), rgba(16,185,129,0.12) 40%, transparent 70%)',
+          'radial-gradient(closest-side, rgba(56,189,248,0.25), rgba(30,64,175,0.12) 40%, transparent 70%)',
         filter: 'blur(18px)',
       }}
     />

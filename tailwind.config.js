@@ -17,8 +17,8 @@ export default {
           500: '#272a3a',
         },
         brand: {
-          cyan: '#14b8a6',
-          violet: '#10b981',
+          cyan: '#38bdf8',
+          violet: '#1e40af',
           pink: '#f59e0b',
           lime: '#facc15',
         },
@@ -38,8 +38,8 @@ export default {
           '50%': { transform: 'translateY(-12px)' },
         },
         'glow': {
-          '0%': { 'box-shadow': '0 0 20px rgba(16,185,129,0.25)' },
-          '100%': { 'box-shadow': '0 0 40px rgba(20,184,166,0.45)' },
+          '0%': { 'box-shadow': '0 0 20px rgba(30,64,175,0.3)' },
+          '100%': { 'box-shadow': '0 0 40px rgba(56,189,248,0.5)' },
         },
       },
     },

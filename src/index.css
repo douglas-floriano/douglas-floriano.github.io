@@ -22,7 +22,7 @@ html, body, #root {
 * { box-sizing: border-box; }
 
 ::selection {
-  background: rgba(16, 185, 129, 0.35);
+  background: rgba(30, 64, 175, 0.4);
   color: #fff;
 }
 
@@ -30,12 +30,12 @@ html, body, #root {
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: #05060a; }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #10b981, #14b8a6);
+  background: linear-gradient(180deg, #1e40af, #38bdf8);
   border-radius: 10px;
 }
 
 .gradient-text {
-  background: linear-gradient(90deg, #14b8a6, #10b981, #f59e0b, #14b8a6);
+  background: linear-gradient(90deg, #38bdf8, #1e40af, #f59e0b, #38bdf8);
   background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;
@@ -45,8 +45,8 @@ html, body, #root {
 
 .grid-bg {
   background-image:
-    linear-gradient(rgba(16,185,129,0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(20,184,166,0.07) 1px, transparent 1px);
+    linear-gradient(rgba(30,64,175,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,0.07) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
 }
@@ -67,7 +67,7 @@ html, body, #root {
   inset: -1px;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(20,184,166,0.55), rgba(16,185,129,0.55), rgba(245,158,11,0.55));
+  background: linear-gradient(135deg, rgba(56,189,248,0.55), rgba(30,64,175,0.55), rgba(245,158,11,0.55));
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -100,9 +100,9 @@ html, body, #root {
   .tech-chip img { width: 36px !important; height: 36px !important; }
 }
 .tech-chip:hover {
-  border-color: rgba(20, 184, 166, 0.9);
+  border-color: rgba(56, 189, 248, 0.9);
   transform: scale(1.3);
-  box-shadow: 0 0 36px rgba(20, 184, 166, 0.75), 0 0 12px rgba(245, 158, 11, 0.4);
+  box-shadow: 0 0 36px rgba(56, 189, 248, 0.75), 0 0 12px rgba(245, 158, 11, 0.4);
 }
 .tech-chip img {
   width: 48px;
@@ -119,7 +119,7 @@ html, body, #root {
   padding: 6px 12px;
   white-space: nowrap;
   background: rgba(5, 6, 10, 0.95);
-  border: 1px solid rgba(20, 184, 166, 0.5);
+  border: 1px solid rgba(56, 189, 248, 0.5);
   border-radius: 10px;
   font-family: 'JetBrains Mono', ui-monospace, monospace;
   font-size: 12px;
@@ -130,7 +130,7 @@ html, body, #root {
   pointer-events: none;
   opacity: 0;
   transition: opacity 0.18s ease;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(20, 184, 166, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.2);
 }
 .tech-chip-label::after {
   content: '';
@@ -139,7 +139,7 @@ html, body, #root {
   left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: rgba(20, 184, 166, 0.5);
+  border-top-color: rgba(56, 189, 248, 0.5);
 }
 .tech-chip:hover .tech-chip-label {
   opacity: 1;
