@@ -1,52 +1,111 @@
-import { useRef, useState, useMemo, useEffect } from 'react'
+import { useRef, useState, useMemo } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Text, Billboard } from '@react-three/drei'
 import * as THREE from 'three'
 import type { Group, Mesh, PointLight } from 'three'
 
-function useCroppedFaceTexture(url: string | undefined) {
-  const [texture, setTexture] = useState<THREE.Texture | null>(null)
-  useEffect(() => {
-    if (!url) return
-    const img = new Image()
-    img.decoding = 'async'
-    img.onload = () => {
-      try {
-        // Reference photo 2268×4032: face sits roughly x=24-76%, y=26-50%
-        const LEFT = 0.24
-        const TOP = 0.26
-        const WIDTH = 0.52
-        const HEIGHT = 0.24
-        const sx = img.naturalWidth * LEFT
-        const sy = img.naturalHeight * TOP
-        const sw = img.naturalWidth * WIDTH
-        const sh = img.naturalHeight * HEIGHT
-        const canvas = document.createElement('canvas')
-        canvas.width = 512
-        canvas.height = 512
-        const ctx = canvas.getContext('2d')
-        if (!ctx) { setTexture(null); return }
-        ctx.fillStyle = '#b07858'
-        ctx.fillRect(0, 0, 512, 512)
-        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 512, 512)
-        const t = new THREE.CanvasTexture(canvas)
-        t.colorSpace = THREE.SRGBColorSpace
-        t.minFilter = THREE.LinearFilter
-        t.magFilter = THREE.LinearFilter
-        t.needsUpdate = true
-        setTexture(t)
-      } catch (err) {
-        console.error('[face-texture] draw failed', err)
-        setTexture(null)
-      }
-    }
-    img.onerror = (err) => {
-      console.error('[face-texture] image load failed', url, err)
-      setTexture(null)
-    }
-    img.src = url
-  }, [url])
-  return texture
+function useStylizedFaceTexture() {
+  return useMemo(() => {
+    const c = document.createElement('canvas')
+    c.width = 512
+    c.height = 512
+    const ctx = c.getContext('2d')!
+
+    // skin background
+    ctx.fillStyle = '#c89272'
+    ctx.fillRect(0, 0, 512, 512)
+
+    // face shading (slightly darker on sides)
+    const grad = ctx.createRadialGradient(256, 280, 80, 256, 280, 280)
+    grad.addColorStop(0, 'rgba(0,0,0,0)')
+    grad.addColorStop(1, 'rgba(0,0,0,0.25)')
+    ctx.fillStyle = grad
+    ctx.fillRect(0, 0, 512, 512)
+
+    // hair (short, dark) — a curved shape on top
+    ctx.fillStyle = '#1f1410'
+    ctx.beginPath()
+    ctx.moveTo(90, 180)
+    ctx.quadraticCurveTo(100, 70, 256, 60)
+    ctx.quadraticCurveTo(412, 70, 422, 180)
+    ctx.quadraticCurveTo(400, 140, 330, 150)
+    ctx.quadraticCurveTo(256, 100, 182, 150)
+    ctx.quadraticCurveTo(112, 140, 90, 180)
+    ctx.closePath()
+    ctx.fill()
+
+    // eyebrows
+    ctx.fillStyle = '#2a1a10'
+    ctx.beginPath(); ctx.ellipse(180, 220, 34, 8, -0.05, 0, Math.PI * 2); ctx.fill()
+    ctx.beginPath(); ctx.ellipse(332, 220, 34, 8, 0.05, 0, Math.PI * 2); ctx.fill()
+
+    // round glasses — frames
+    ctx.strokeStyle = '#0b1220'
+    ctx.lineWidth = 8
+    ctx.beginPath(); ctx.arc(180, 255, 52, 0, Math.PI * 2); ctx.stroke()
+    ctx.beginPath(); ctx.arc(332, 255, 52, 0, Math.PI * 2); ctx.stroke()
+    // bridge
+    ctx.beginPath(); ctx.moveTo(228, 255); ctx.lineTo(284, 255); ctx.stroke()
+    // glass reflection tint
+    ctx.fillStyle = 'rgba(56, 189, 248, 0.18)'
+    ctx.beginPath(); ctx.arc(180, 255, 48, 0, Math.PI * 2); ctx.fill()
+    ctx.beginPath(); ctx.arc(332, 255, 48, 0, Math.PI * 2); ctx.fill()
+    // reflection highlights
+    ctx.fillStyle = 'rgba(255,255,255,0.55)'
+    ctx.beginPath(); ctx.ellipse(160, 235, 12, 6, -0.7, 0, Math.PI * 2); ctx.fill()
+    ctx.beginPath(); ctx.ellipse(312, 235, 12, 6, -0.7, 0, Math.PI * 2); ctx.fill()
+
+    // eyes (behind glasses)
+    ctx.fillStyle = '#ffffff'
+    ctx.beginPath(); ctx.arc(180, 258, 14, 0, Math.PI * 2); ctx.fill()
+    ctx.beginPath(); ctx.arc(332, 258, 14, 0, Math.PI * 2); ctx.fill()
+    ctx.fillStyle = '#3d2817'
+    ctx.beginPath(); ctx.arc(183, 260, 7, 0, Math.PI * 2); ctx.fill()
+    ctx.beginPath(); ctx.arc(335, 260, 7, 0, Math.PI * 2); ctx.fill()
+    ctx.fillStyle = '#0b1220'
+    ctx.beginPath(); ctx.arc(183, 261, 4, 0, Math.PI * 2); ctx.fill()
+    ctx.beginPath(); ctx.arc(335, 261, 4, 0, Math.PI * 2); ctx.fill()
+
+    // nose
+    ctx.strokeStyle = 'rgba(90, 50, 30, 0.4)'
+    ctx.lineWidth = 3
+    ctx.beginPath()
+    ctx.moveTo(256, 270)
+    ctx.quadraticCurveTo(248, 320, 256, 340)
+    ctx.quadraticCurveTo(264, 350, 272, 340)
+    ctx.stroke()
+
+    // mouth (smile)
+    ctx.strokeStyle = '#3d1f12'
+    ctx.lineWidth = 5
+    ctx.beginPath()
+    ctx.arc(256, 380, 42, 0.15 * Math.PI, 0.85 * Math.PI)
+    ctx.stroke()
+    // lips tint
+    ctx.strokeStyle = 'rgba(160, 60, 50, 0.5)'
+    ctx.lineWidth = 3
+    ctx.beginPath()
+    ctx.arc(256, 378, 40, 0.18 * Math.PI, 0.82 * Math.PI)
+    ctx.stroke()
+
+    // beard/stubble hint
+    ctx.fillStyle = 'rgba(31, 20, 16, 0.22)'
+    ctx.beginPath()
+    ctx.ellipse(256, 420, 90, 28, 0, 0, Math.PI)
+    ctx.fill()
+
+    // cheek blush
+    ctx.fillStyle = 'rgba(200, 90, 70, 0.18)'
+    ctx.beginPath(); ctx.ellipse(140, 340, 30, 18, 0, 0, Math.PI * 2); ctx.fill()
+    ctx.beginPath(); ctx.ellipse(372, 340, 30, 18, 0, 0, Math.PI * 2); ctx.fill()
+
+    const t = new THREE.CanvasTexture(c)
+    t.colorSpace = THREE.SRGBColorSpace
+    t.minFilter = THREE.LinearFilter
+    t.magFilter = THREE.LinearFilter
+    t.needsUpdate = true
+    return t
+  }, [])
 }
 
 const DESK_Y = -1.79
@@ -99,9 +158,9 @@ function Desk() {
   )
 }
 
-function Character({ avatarUrl }: { avatarUrl?: string }) {
-  const faceTex = useCroppedFaceTexture(avatarUrl)
-  const SKIN = '#b07858'
+function Character() {
+  const faceTex = useStylizedFaceTexture()
+  const SKIN = '#c89272'
   const SHIRT = '#1e3a8a'
 
   return (
@@ -132,11 +191,7 @@ function Character({ avatarUrl }: { avatarUrl?: string }) {
         {/* photo face */}
         <mesh position={[0, 0, 0]}>
           <planeGeometry args={[0.7, 0.7]} />
-          {faceTex ? (
-            <meshBasicMaterial map={faceTex} toneMapped={false} />
-          ) : (
-            <meshBasicMaterial color={SKIN} />
-          )}
+          <meshBasicMaterial map={faceTex} toneMapped={false} />
         </mesh>
         {/* subtle cyan rim */}
         <mesh position={[0, 0, -0.01]}>
@@ -176,7 +231,7 @@ function Character({ avatarUrl }: { avatarUrl?: string }) {
   )
 }
 
-function Chair({ spinRef, avatarUrl }: { spinRef: React.MutableRefObject<number>; avatarUrl?: string }) {
+function Chair({ spinRef }: { spinRef: React.MutableRefObject<number> }) {
   const group = useRef<Group>(null)
   const velocity = useRef(0)
   const { hovered, handlers } = useHover()
@@ -246,7 +301,7 @@ function Chair({ spinRef, avatarUrl }: { spinRef: React.MutableRefObject<number>
         )
       })}
       {/* character sitting on chair */}
-      <Character avatarUrl={avatarUrl} />
+      <Character />
     </group>
   )
 }
@@ -938,13 +993,7 @@ function RubberDuck() {
   )
 }
 
-export default function DeskSetup({
-  onKeyboardClick,
-  avatarUrl,
-}: {
-  onKeyboardClick: () => void
-  avatarUrl?: string
-}) {
+export default function DeskSetup({ onKeyboardClick }: { onKeyboardClick: () => void }) {
   const spinChair = useRef(0)
   const steam = useRef<Steam[]>([])
   const leaves = useRef<Leaf[]>([])
@@ -955,7 +1004,7 @@ export default function DeskSetup({
   return (
     <group>
       <Desk />
-      <Chair spinRef={spinChair} avatarUrl={avatarUrl} />
+      <Chair spinRef={spinChair} />
       <Keyboard onType={onKeyboardClick} typingRef={typing} />
       <Mouse cursorFliesRef={cursorFlies} />
       <CursorFlies fliesRef={cursorFlies} />
