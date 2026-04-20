@@ -1,10 +1,10 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { OrbitControls, Stars, Environment, Line } from '@react-three/drei'
+import { OrbitControls, Stars, Environment, Float, Grid } from '@react-three/drei'
 import { useRef, useMemo, useEffect, useState, useCallback } from 'react'
-import type { Group, Points, ShaderMaterial } from 'three'
+import type { Group, Mesh, Points, ShaderMaterial } from 'three'
 import * as THREE from 'three'
 
-type Shockwave = { t: number; origin: THREE.Vector3 }
+type Burst = { t: number; origin: THREE.Vector3 }
 
 function useScrollProgress() {
   const [p, setP] = useState(0)
@@ -21,95 +21,381 @@ function useScrollProgress() {
 }
 
 /**
- * Particle sphere that:
- * - bulges toward the cursor
- * - ripples outward from click origin (shockwave)
- * - gently breathes over time
+ * Canvas-texture "terminal" showing Douglas's real deploy workflow,
+ * typing line by line on a loop. Re-rendered into a THREE.CanvasTexture.
  */
-function InteractiveParticleSphere({
-  shockwaves,
-  pressed,
+const DEPLOY_SCRIPT: { text: string; kind: 'prompt' | 'cmd' | 'info' | 'ok' | 'warn' | 'title' | 'blank' }[] = [
+  { text: '╔═ douglas@ibsystem ─ walletLote ═════════════╗', kind: 'title' },
+  { text: '', kind: 'blank' },
+  { text: '$ git push origin main', kind: 'cmd' },
+  { text: '→ GH Actions: deploy-prod.yml', kind: 'info' },
+  { text: '→ building docker: php-fpm + nginx', kind: 'info' },
+  { text: '✓ images pushed to ECR', kind: 'ok' },
+  { text: '→ updating ECS task-def', kind: 'info' },
+  { text: '✓ WalletLote service healthy', kind: 'ok' },
+  { text: '→ yarn main · s3 sync · cf invalidate', kind: 'info' },
+  { text: '✓ deployed in 2m 14s', kind: 'ok' },
+  { text: '', kind: 'blank' },
+  { text: '$ laravel new saas --stack=react', kind: 'cmd' },
+  { text: '→ aws rds · mariadb · horizon', kind: 'info' },
+  { text: '✓ online · tenants: 42 · uptime 99.98%', kind: 'ok' },
+  { text: '', kind: 'blank' },
+  { text: '$ _', kind: 'prompt' },
+]
+
+function useTerminalTexture() {
+  const canvas = useMemo(() => {
+    const c = document.createElement('canvas')
+    c.width = 1024
+    c.height = 640
+    return c
+  }, [])
+  const texture = useMemo(() => {
+    const t = new THREE.CanvasTexture(canvas)
+    t.minFilter = THREE.LinearFilter
+    t.magFilter = THREE.LinearFilter
+    t.anisotropy = 4
+    return t
+  }, [canvas])
+
+  const state = useRef({
+    lineIdx: 0,
+    charIdx: 0,
+    acc: 0,
+    done: false,
+    shown: [] as { text: string; kind: (typeof DEPLOY_SCRIPT)[number]['kind'] }[],
+    restartAt: -1,
+    blink: 0,
+  })
+
+  const colorFor = (kind: (typeof DEPLOY_SCRIPT)[number]['kind']) => {
+    switch (kind) {
+      case 'title': return '#60a5fa'
+      case 'cmd': return '#f8fafc'
+      case 'info': return '#94a3b8'
+      case 'ok': return '#fbbf24'
+      case 'warn': return '#fb7185'
+      case 'prompt': return '#f8fafc'
+      default: return '#cbd5e1'
+    }
+  }
+
+  const draw = (glitch: number, elapsed: number) => {
+    const ctx = canvas.getContext('2d')!
+    // bg
+    const grad = ctx.createLinearGradient(0, 0, 0, canvas.height)
+    grad.addColorStop(0, '#060a14')
+    grad.addColorStop(1, '#0b1220')
+    ctx.fillStyle = grad
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    // window chrome bar
+    ctx.fillStyle = '#0f172a'
+    ctx.fillRect(0, 0, canvas.width, 52)
+    ctx.fillStyle = '#ef4444'; ctx.beginPath(); ctx.arc(28, 26, 8, 0, Math.PI * 2); ctx.fill()
+    ctx.fillStyle = '#f59e0b'; ctx.beginPath(); ctx.arc(56, 26, 8, 0, Math.PI * 2); ctx.fill()
+    ctx.fillStyle = '#22c55e'; ctx.beginPath(); ctx.arc(84, 26, 8, 0, Math.PI * 2); ctx.fill()
+    ctx.fillStyle = '#64748b'
+    ctx.font = '18px ui-monospace, Menlo, monospace'
+    ctx.textAlign = 'center'
+    ctx.fillText('~/ibsystem/walletLote_backend ─ zsh', canvas.width / 2, 32)
+    ctx.textAlign = 'left'
+
+    // grid scanlines
+    ctx.globalAlpha = 0.08
+    ctx.fillStyle = '#38bdf8'
+    for (let y = 56; y < canvas.height; y += 3) ctx.fillRect(0, y, canvas.width, 1)
+    ctx.globalAlpha = 1
+
+    // text
+    ctx.font = '22px ui-monospace, Menlo, monospace'
+    const lineH = 30
+    const padX = 36
+    const padY = 88
+    const s = state.current
+
+    for (let i = 0; i < s.shown.length; i++) {
+      const ln = s.shown[i]
+      ctx.fillStyle = colorFor(ln.kind)
+      if (glitch > 0.01 && Math.random() < glitch * 0.4) {
+        ctx.fillStyle = '#38bdf8'
+        const jitter = (Math.random() - 0.5) * glitch * 12
+        ctx.fillText(ln.text, padX + jitter, padY + i * lineH)
+      } else {
+        ctx.fillText(ln.text, padX, padY + i * lineH)
+      }
+    }
+
+    // cursor
+    if (!s.done) {
+      const cur = s.shown[s.shown.length - 1]
+      if (cur) {
+        const blink = Math.floor(elapsed * 2) % 2 === 0 ? 1 : 0
+        if (blink) {
+          ctx.fillStyle = '#38bdf8'
+          const w = ctx.measureText(cur.text).width
+          ctx.fillRect(padX + w + 4, padY + (s.shown.length - 1) * lineH - 18, 12, 22)
+        }
+      }
+    } else {
+      const blink = Math.floor(elapsed * 2) % 2 === 0 ? 1 : 0
+      if (blink) {
+        ctx.fillStyle = '#38bdf8'
+        const last = s.shown[s.shown.length - 1]?.text ?? '$ '
+        const w = ctx.measureText(last).width
+        ctx.fillRect(padX + w + 4, padY + (s.shown.length - 1) * lineH - 18, 12, 22)
+      }
+    }
+
+    texture.needsUpdate = true
+  }
+
+  const step = (dt: number, glitch: number, elapsed: number) => {
+    const s = state.current
+    if (s.restartAt > 0 && elapsed >= s.restartAt) {
+      s.restartAt = -1
+      s.done = false
+      s.shown = []
+      s.lineIdx = 0
+      s.charIdx = 0
+      s.acc = 0
+    }
+    if (!s.done) {
+      s.acc += dt
+      const speed = 0.02
+      while (s.acc >= speed && !s.done) {
+        s.acc -= speed
+        const target = DEPLOY_SCRIPT[s.lineIdx]
+        if (!target) {
+          s.done = true
+          s.restartAt = elapsed + 4
+          break
+        }
+        if (target.kind === 'blank') {
+          s.shown.push({ text: '', kind: 'blank' })
+          s.lineIdx++
+          s.charIdx = 0
+          continue
+        }
+        const curShown = s.shown[s.shown.length - 1]
+        if (!curShown || curShown !== s.shown[s.shown.length - 1] || s.charIdx === 0) {
+          if (s.charIdx === 0) s.shown.push({ text: '', kind: target.kind })
+        }
+        s.charIdx++
+        s.shown[s.shown.length - 1] = {
+          text: target.text.slice(0, s.charIdx),
+          kind: target.kind,
+        }
+        if (s.charIdx >= target.text.length) {
+          s.lineIdx++
+          s.charIdx = 0
+        }
+      }
+    }
+    draw(glitch, elapsed)
+  }
+
+  return { texture, step }
+}
+
+function DeployMonitor({
+  glitchRef,
+  onClickInside,
 }: {
-  shockwaves: React.MutableRefObject<Shockwave[]>
-  pressed: React.MutableRefObject<boolean>
+  glitchRef: React.MutableRefObject<number>
+  onClickInside: (p: THREE.Vector3) => void
 }) {
+  const group = useRef<Group>(null)
+  const screen = useRef<Mesh>(null)
+  const { mouse } = useThree()
+  const { texture, step } = useTerminalTexture()
+  const elapsed = useRef(0)
+
+  useFrame((_, d) => {
+    elapsed.current += d
+    glitchRef.current = Math.max(0, glitchRef.current - d * 1.6)
+    step(d, glitchRef.current, elapsed.current)
+
+    if (group.current) {
+      // parallax tilt toward cursor
+      group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, mouse.x * 0.35, 0.06)
+      group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, -mouse.y * 0.25, 0.06)
+      // gentle float
+      group.current.position.y = Math.sin(elapsed.current * 0.8) * 0.08
+    }
+  })
+
+  return (
+    <group ref={group}>
+      {/* bezel */}
+      <mesh position={[0, 0, -0.06]}>
+        <boxGeometry args={[3.4, 2.2, 0.12]} />
+        <meshStandardMaterial color="#0b1220" metalness={0.9} roughness={0.25} />
+      </mesh>
+      {/* screen */}
+      <mesh
+        ref={screen}
+        onClick={(e) => {
+          e.stopPropagation()
+          glitchRef.current = 1
+          onClickInside(e.point.clone())
+        }}
+      >
+        <planeGeometry args={[3.2, 2.0]} />
+        <meshBasicMaterial map={texture} toneMapped={false} />
+      </mesh>
+      {/* glow halo */}
+      <mesh position={[0, 0, -0.08]}>
+        <planeGeometry args={[3.8, 2.6]} />
+        <meshBasicMaterial color="#1e40af" transparent opacity={0.18} toneMapped={false} />
+      </mesh>
+      {/* stand */}
+      <mesh position={[0, -1.4, -0.05]}>
+        <boxGeometry args={[0.5, 0.5, 0.1]} />
+        <meshStandardMaterial color="#0b1220" metalness={0.8} roughness={0.3} />
+      </mesh>
+      <mesh position={[0, -1.7, -0.05]}>
+        <boxGeometry args={[1.4, 0.08, 0.3]} />
+        <meshStandardMaterial color="#0b1220" metalness={0.8} roughness={0.3} />
+      </mesh>
+    </group>
+  )
+}
+
+/** Floating service badges (ECS, S3, RDS, CloudFront, Laravel, React) orbiting the monitor */
+const SERVICES = [
+  { label: 'AWS', color: '#f59e0b' },
+  { label: 'ECS', color: '#f59e0b' },
+  { label: 'S3', color: '#fbbf24' },
+  { label: 'RDS', color: '#38bdf8' },
+  { label: 'Laravel', color: '#ef4444' },
+  { label: 'React', color: '#38bdf8' },
+  { label: 'Docker', color: '#60a5fa' },
+  { label: 'Nginx', color: '#22c55e' },
+]
+
+function ServiceBadge({ label, color, position }: { label: string; color: string; position: [number, number, number] }) {
+  const tex = useMemo(() => {
+    const c = document.createElement('canvas')
+    c.width = 256; c.height = 128
+    const ctx = c.getContext('2d')!
+    ctx.fillStyle = '#0b1220'
+    ctx.fillRect(0, 0, 256, 128)
+    ctx.strokeStyle = color
+    ctx.lineWidth = 4
+    ctx.strokeRect(4, 4, 248, 120)
+    ctx.fillStyle = color
+    ctx.font = 'bold 44px ui-monospace, Menlo, monospace'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillText(label, 128, 64)
+    const t = new THREE.CanvasTexture(c)
+    t.minFilter = THREE.LinearFilter
+    return t
+  }, [label, color])
+
+  return (
+    <Float speed={1.5} rotationIntensity={0.35} floatIntensity={0.6}>
+      <mesh position={position}>
+        <planeGeometry args={[0.9, 0.45]} />
+        <meshBasicMaterial map={tex} transparent toneMapped={false} />
+      </mesh>
+    </Float>
+  )
+}
+
+function OrbitingServices() {
+  const group = useRef<Group>(null)
+  useFrame((_, d) => {
+    if (group.current) group.current.rotation.y += d * 0.15
+  })
+  const positions = useMemo(() => {
+    return SERVICES.map((_, i) => {
+      const a = (i / SERVICES.length) * Math.PI * 2
+      const r = 3.1
+      const y = Math.sin(i * 1.7) * 0.8
+      return [Math.cos(a) * r, y, Math.sin(a) * r] as [number, number, number]
+    })
+  }, [])
+  return (
+    <group ref={group}>
+      {SERVICES.map((s, i) => (
+        <ServiceBadge key={s.label + i} label={s.label} color={s.color} position={positions[i]} />
+      ))}
+    </group>
+  )
+}
+
+/** Particle bursts when clicking the screen (deploy rocket effect) */
+function BurstParticles({ bursts }: { bursts: React.MutableRefObject<Burst[]> }) {
   const pointsRef = useRef<Points>(null)
   const matRef = useRef<ShaderMaterial>(null)
-  const { mouse, viewport, camera } = useThree()
 
-  const COUNT = 4000
-  const { positions, seeds } = useMemo(() => {
-    const positions = new Float32Array(COUNT * 3)
-    const seeds = new Float32Array(COUNT)
-    for (let i = 0; i < COUNT; i++) {
-      // Fibonacci sphere for even distribution
-      const k = i + 0.5
-      const phi = Math.acos(1 - (2 * k) / COUNT)
-      const theta = Math.PI * (1 + Math.sqrt(5)) * k
-      const r = 1.6
-      positions[i * 3] = Math.cos(theta) * Math.sin(phi) * r
-      positions[i * 3 + 1] = Math.sin(theta) * Math.sin(phi) * r
-      positions[i * 3 + 2] = Math.cos(phi) * r
-      seeds[i] = Math.random()
-    }
-    return { positions, seeds }
-  }, [])
+  const MAX = 400
+  const positions = useMemo(() => new Float32Array(MAX * 3), [])
+  const velocities = useMemo(() => new Float32Array(MAX * 3), [])
+  const life = useMemo(() => new Float32Array(MAX), [])
+  const alive = useRef(new Uint8Array(MAX))
 
   const uniforms = useMemo(
     () => ({
-      uTime: { value: 0 },
-      uMouse: { value: new THREE.Vector3() },
-      uPressed: { value: 0 },
-      uShockT: { value: -1 },
-      uShockOrigin: { value: new THREE.Vector3() },
-      uShockT2: { value: -1 },
-      uShockOrigin2: { value: new THREE.Vector3() },
       uColorA: { value: new THREE.Color('#38bdf8') },
       uColorB: { value: new THREE.Color('#f59e0b') },
-      uColorC: { value: new THREE.Color('#1e40af') },
     }),
     [],
   )
 
-  useFrame((state, d) => {
-    if (!matRef.current) return
-    uniforms.uTime.value += d
-
-    // cursor projected onto a plane in front of the scene
-    const mx = (mouse.x * viewport.width) / 2
-    const my = (mouse.y * viewport.height) / 2
-    uniforms.uMouse.value.set(mx, my, 0)
-
-    // smooth press state
-    const target = pressed.current ? 1 : 0
-    uniforms.uPressed.value = THREE.MathUtils.lerp(uniforms.uPressed.value, target, 0.12)
-
-    // shockwaves — we support up to 2 concurrent
-    const active = shockwaves.current
-    for (const s of active) s.t += d
-    // drop old
-    shockwaves.current = active.filter((s) => s.t < 2.5)
-
-    const s1 = shockwaves.current[shockwaves.current.length - 1]
-    const s2 = shockwaves.current[shockwaves.current.length - 2]
-    uniforms.uShockT.value = s1 ? s1.t : -1
-    if (s1) uniforms.uShockOrigin.value.copy(s1.origin)
-    uniforms.uShockT2.value = s2 ? s2.t : -1
-    if (s2) uniforms.uShockOrigin2.value.copy(s2.origin)
-
-    // idle camera breath
-    if (pointsRef.current) {
-      pointsRef.current.rotation.y += d * 0.06
+  const spawn = (origin: THREE.Vector3) => {
+    let spawned = 0
+    for (let i = 0; i < MAX && spawned < 80; i++) {
+      if (!alive.current[i]) {
+        alive.current[i] = 1
+        positions[i * 3] = origin.x
+        positions[i * 3 + 1] = origin.y
+        positions[i * 3 + 2] = origin.z
+        const ang = Math.random() * Math.PI * 2
+        const up = Math.random() * 0.8 + 0.2
+        const sp = Math.random() * 2.2 + 0.8
+        velocities[i * 3] = Math.cos(ang) * sp * 0.4
+        velocities[i * 3 + 1] = up * sp
+        velocities[i * 3 + 2] = Math.sin(ang) * sp * 0.4
+        life[i] = 1
+        spawned++
+      }
     }
-    void state
-    void camera
+  }
+
+  useFrame((_, d) => {
+    // ingest pending bursts
+    while (bursts.current.length > 0) {
+      const b = bursts.current.pop()!
+      spawn(b.origin)
+    }
+    for (let i = 0; i < MAX; i++) {
+      if (!alive.current[i]) continue
+      life[i] -= d * 0.7
+      if (life[i] <= 0) {
+        alive.current[i] = 0
+        positions[i * 3] = 9999
+        continue
+      }
+      positions[i * 3] += velocities[i * 3] * d
+      positions[i * 3 + 1] += velocities[i * 3 + 1] * d
+      positions[i * 3 + 2] += velocities[i * 3 + 2] * d
+      velocities[i * 3 + 1] -= d * 1.4 // gravity
+    }
+    const geom = pointsRef.current?.geometry
+    if (geom) {
+      (geom.attributes.position as THREE.BufferAttribute).needsUpdate = true
+      ;(geom.attributes.aLife as THREE.BufferAttribute).needsUpdate = true
+    }
   })
 
   return (
     <points ref={pointsRef}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
-        <bufferAttribute attach="attributes-aSeed" args={[seeds, 1]} />
+        <bufferAttribute attach="attributes-aLife" args={[life, 1]} />
       </bufferGeometry>
       <shaderMaterial
         ref={matRef}
@@ -117,74 +403,27 @@ function InteractiveParticleSphere({
         transparent
         depthWrite={false}
         blending={THREE.AdditiveBlending}
-        vertexShader={/* glsl */ `
-          uniform float uTime;
-          uniform vec3 uMouse;
-          uniform float uPressed;
-          uniform float uShockT;
-          uniform vec3 uShockOrigin;
-          uniform float uShockT2;
-          uniform vec3 uShockOrigin2;
-          attribute float aSeed;
-          varying float vGlow;
-          varying float vSeed;
-
-          float ripple(vec3 worldPos, vec3 origin, float t) {
-            if (t < 0.0) return 0.0;
-            float dist = distance(worldPos, origin);
-            float wave = sin(dist * 5.0 - t * 8.0);
-            float envelope = exp(-t * 1.8) * exp(-pow(dist - t * 1.8, 2.0) * 3.0);
-            return wave * envelope;
-          }
-
+        vertexShader={`
+          attribute float aLife;
+          varying float vLife;
           void main() {
-            vec3 pos = position;
-            vec3 dir = normalize(pos);
-
-            // breathing
-            float breath = sin(uTime * 1.2 + aSeed * 6.28) * 0.04;
-            pos += dir * breath;
-
-            // cursor attraction: bulge outward toward mouse
-            vec3 toMouse = uMouse - pos;
-            float md = length(toMouse);
-            float pull = smoothstep(2.2, 0.0, md) * 0.45;
-            pos += normalize(toMouse + 0.0001) * pull;
-
-            // pressed: contract inward (charge up)
-            pos -= dir * uPressed * 0.35;
-
-            // shockwaves push particles along radial direction
-            vec3 worldPos = (modelMatrix * vec4(position, 1.0)).xyz;
-            float r1 = ripple(worldPos, uShockOrigin, uShockT);
-            float r2 = ripple(worldPos, uShockOrigin2, uShockT2);
-            pos += dir * (r1 + r2) * 0.6;
-
-            vec4 mv = modelViewMatrix * vec4(pos, 1.0);
+            vLife = aLife;
+            vec4 mv = modelViewMatrix * vec4(position, 1.0);
             gl_Position = projectionMatrix * mv;
-
-            float size = 2.6 + aSeed * 2.5 + abs(r1 + r2) * 14.0 + pull * 6.0 + uPressed * 4.0;
-            gl_PointSize = size * (260.0 / -mv.z);
-
-            vGlow = clamp(abs(r1 + r2) * 1.8 + pull * 1.2 + uPressed * 0.8, 0.0, 1.6);
-            vSeed = aSeed;
+            gl_PointSize = (6.0 + aLife * 14.0) * (260.0 / -mv.z);
           }
         `}
-        fragmentShader={/* glsl */ `
+        fragmentShader={`
           uniform vec3 uColorA;
           uniform vec3 uColorB;
-          uniform vec3 uColorC;
-          varying float vGlow;
-          varying float vSeed;
+          varying float vLife;
           void main() {
             vec2 c = gl_PointCoord - 0.5;
             float d = length(c);
             if (d > 0.5) discard;
-            float alpha = smoothstep(0.5, 0.0, d);
-            vec3 base = mix(uColorC, uColorA, vSeed);
-            vec3 col = mix(base, uColorB, clamp(vGlow, 0.0, 1.0));
-            col *= 1.0 + vGlow * 1.5;
-            gl_FragColor = vec4(col, alpha);
+            float a = smoothstep(0.5, 0.0, d) * clamp(vLife, 0.0, 1.0);
+            vec3 col = mix(uColorA, uColorB, 1.0 - vLife);
+            gl_FragColor = vec4(col * (1.0 + vLife), a);
           }
         `}
       />
@@ -192,109 +431,14 @@ function InteractiveParticleSphere({
   )
 }
 
-/** Tech nodes (like a dev network) with edges that gently wobble */
-function NeuralNet() {
-  const group = useRef<Group>(null)
-  const { mouse } = useThree()
-
-  const nodes = useMemo(() => {
-    const arr: THREE.Vector3[] = []
-    const N = 14
-    for (let i = 0; i < N; i++) {
-      const phi = Math.acos(1 - (2 * (i + 0.5)) / N)
-      const theta = Math.PI * (1 + Math.sqrt(5)) * i
-      const r = 2.6
-      arr.push(
-        new THREE.Vector3(
-          Math.cos(theta) * Math.sin(phi) * r,
-          Math.sin(theta) * Math.sin(phi) * r,
-          Math.cos(phi) * r,
-        ),
-      )
-    }
-    return arr
-  }, [])
-
-  const edges = useMemo(() => {
-    const list: [THREE.Vector3, THREE.Vector3][] = []
-    for (let i = 0; i < nodes.length; i++) {
-      let best = -1
-      let bestD = Infinity
-      for (let j = 0; j < nodes.length; j++) {
-        if (i === j) continue
-        const d = nodes[i].distanceTo(nodes[j])
-        if (d < bestD) {
-          bestD = d
-          best = j
-        }
-      }
-      if (best >= 0) list.push([nodes[i], nodes[best]])
-      // a second connection for density
-      let second = -1
-      let secondD = Infinity
-      for (let j = 0; j < nodes.length; j++) {
-        if (i === j || j === best) continue
-        const d = nodes[i].distanceTo(nodes[j])
-        if (d < secondD) {
-          secondD = d
-          second = j
-        }
-      }
-      if (second >= 0) list.push([nodes[i], nodes[second]])
-    }
-    return list
-  }, [nodes])
-
-  useFrame((_, d) => {
-    if (!group.current) return
-    group.current.rotation.y += d * 0.08
-    group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, mouse.y * 0.35, 0.04)
-    group.current.rotation.z = THREE.MathUtils.lerp(group.current.rotation.z, -mouse.x * 0.2, 0.04)
-  })
-
-  return (
-    <group ref={group}>
-      {edges.map((e, i) => (
-        <Line
-          key={i}
-          points={[e[0], e[1]]}
-          color="#38bdf8"
-          transparent
-          opacity={0.18}
-          lineWidth={1}
-        />
-      ))}
-      {nodes.map((n, i) => (
-        <mesh key={i} position={n}>
-          <octahedronGeometry args={[0.07, 0]} />
-          <meshStandardMaterial
-            color={i % 3 === 0 ? '#f59e0b' : '#38bdf8'}
-            emissive={i % 3 === 0 ? '#f59e0b' : '#38bdf8'}
-            emissiveIntensity={2.4}
-            toneMapped={false}
-          />
-        </mesh>
-      ))}
-    </group>
-  )
-}
-
 function MouseLight() {
   const ref = useRef<THREE.PointLight>(null)
   useFrame(({ mouse, viewport }) => {
     if (!ref.current) return
-    ref.current.position.x = THREE.MathUtils.lerp(
-      ref.current.position.x,
-      (mouse.x * viewport.width) / 2,
-      0.12,
-    )
-    ref.current.position.y = THREE.MathUtils.lerp(
-      ref.current.position.y,
-      (mouse.y * viewport.height) / 2,
-      0.12,
-    )
+    ref.current.position.x = THREE.MathUtils.lerp(ref.current.position.x, (mouse.x * viewport.width) / 2, 0.12)
+    ref.current.position.y = THREE.MathUtils.lerp(ref.current.position.y, (mouse.y * viewport.height) / 2, 0.12)
   })
-  return <pointLight ref={ref} position={[0, 0, 3]} intensity={2} color="#f59e0b" distance={7} />
+  return <pointLight ref={ref} position={[0, 0, 3]} intensity={1.6} color="#f59e0b" distance={8} />
 }
 
 function ScrollRig({ progress, children }: { progress: number; children: React.ReactNode }) {
@@ -302,79 +446,75 @@ function ScrollRig({ progress, children }: { progress: number; children: React.R
   const { camera } = useThree()
   useFrame(() => {
     if (group.current) {
-      group.current.rotation.y = THREE.MathUtils.lerp(
-        group.current.rotation.y,
-        progress * Math.PI * 0.4,
-        0.06,
-      )
-      const s = 1 - progress * 0.2
-      group.current.scale.setScalar(THREE.MathUtils.lerp(group.current.scale.x, s, 0.06))
+      group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, progress * Math.PI * 0.35, 0.05)
+      const s = 1 - progress * 0.18
+      group.current.scale.setScalar(THREE.MathUtils.lerp(group.current.scale.x, s, 0.05))
     }
-    camera.position.z = THREE.MathUtils.lerp(camera.position.z, 5.5 + progress * 2.5, 0.06)
+    camera.position.z = THREE.MathUtils.lerp(camera.position.z, 5.5 + progress * 2.2, 0.05)
   })
   return <group ref={group}>{children}</group>
 }
 
 export default function HeroScene() {
   const progress = useScrollProgress()
-  const shockwaves = useRef<Shockwave[]>([])
-  const pressed = useRef(false)
+  const glitch = useRef(0)
+  const bursts = useRef<Burst[]>([])
   const [hint, setHint] = useState(true)
 
-  const addShockwave = useCallback((ndcX: number, ndcY: number) => {
-    // approximate 3D origin on near plane — enough for the ripple feel
-    const origin = new THREE.Vector3(ndcX * 2.5, ndcY * 2.5, 0)
-    shockwaves.current.push({ t: 0, origin })
-    if (shockwaves.current.length > 2) shockwaves.current.shift()
+  const triggerBurst = useCallback((p: THREE.Vector3) => {
+    bursts.current.push({ t: 0, origin: p })
+    setHint(false)
   }, [])
 
   return (
     <div className="relative w-full h-full">
       <Canvas
         dpr={[1, 2]}
-        camera={{ position: [0, 0, 5.5], fov: 52 }}
+        camera={{ position: [0, 0.2, 5.5], fov: 52 }}
         gl={{ antialias: true, alpha: true }}
-        onPointerDown={(e) => {
-          pressed.current = true
-          setHint(false)
-          const rect = (e.target as HTMLElement).getBoundingClientRect()
-          const x = ((e.clientX - rect.left) / rect.width) * 2 - 1
-          const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1)
-          addShockwave(x, y)
-        }}
-        onPointerUp={() => {
-          pressed.current = false
-        }}
-        onPointerLeave={() => {
-          pressed.current = false
-        }}
       >
         <color attach="background" args={[0, 0, 0]} />
-        <ambientLight intensity={0.35} />
+        <fog attach="fog" args={['#03060d', 6, 14]} />
+        <ambientLight intensity={0.45} />
         <pointLight position={[5, 5, 5]} intensity={1.2} color="#38bdf8" />
         <pointLight position={[-5, -3, 2]} intensity={1} color="#1e40af" />
         <MouseLight />
 
         <Environment preset="night" />
-        <Stars radius={60} depth={70} count={2000} factor={3} saturation={0} fade speed={1} />
+        <Stars radius={60} depth={70} count={1600} factor={3} saturation={0} fade speed={1} />
+
+        <Grid
+          position={[0, -1.9, 0]}
+          args={[20, 20]}
+          cellSize={0.6}
+          cellThickness={0.6}
+          cellColor="#1e3a8a"
+          sectionSize={3}
+          sectionThickness={1.2}
+          sectionColor="#38bdf8"
+          fadeDistance={14}
+          fadeStrength={1.5}
+          infiniteGrid
+        />
 
         <ScrollRig progress={progress}>
-          <InteractiveParticleSphere shockwaves={shockwaves} pressed={pressed} />
-          <NeuralNet />
+          <DeployMonitor glitchRef={glitch} onClickInside={triggerBurst} />
+          <OrbitingServices />
+          <BurstParticles bursts={bursts} />
         </ScrollRig>
 
         <OrbitControls
           enablePan={false}
           enableZoom={false}
           autoRotate
-          autoRotateSpeed={0.4}
+          autoRotateSpeed={0.3}
           rotateSpeed={0.8}
-          minPolarAngle={Math.PI / 3}
+          minPolarAngle={Math.PI / 2.6}
           maxPolarAngle={(2 * Math.PI) / 3}
         />
       </Canvas>
       <div className="pointer-events-none absolute bottom-3 right-4 text-[10px] font-mono text-white/40 uppercase tracking-wider">
-        {hint ? 'mova · clique · arraste' : 'interativo'}
+        {hint ? 'clique no monitor · arraste · role' : 'deploy · arrastar · rolar'}
       </div>
     </div>
   )
