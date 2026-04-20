@@ -4,7 +4,7 @@ import { useRef, useMemo, useEffect, useState, useCallback } from 'react'
 import type { Group, Mesh } from 'three'
 import * as THREE from 'three'
 
-type ShockRing = { t: number }
+type Toast = { t: number; version: string }
 
 function useScrollProgress() {
   const [p, setP] = useState(0)
@@ -193,29 +193,99 @@ function useTerminalTexture(extraLines: React.MutableRefObject<Line[]>) {
   return { texture, step }
 }
 
-/** Expanding neon rings triggered by clicks */
-function Shockwaves({ rings }: { rings: React.MutableRefObject<ShockRing[]> }) {
+/** Floating "✓ Deployed vX.Y.Z" toast notifications that pop up and fade */
+function DeployToasts({ toasts }: { toasts: React.MutableRefObject<Toast[]> }) {
   const group = useRef<Group>(null)
-  const refs = useRef<Mesh[]>([])
   const MAX = 4
+  const refs = useRef<Mesh[]>([])
+
+  const textures = useMemo(() => {
+    return Array.from({ length: MAX }).map(() => {
+      const c = document.createElement('canvas')
+      c.width = 512
+      c.height = 128
+      const t = new THREE.CanvasTexture(c)
+      t.minFilter = THREE.LinearFilter
+      t.magFilter = THREE.LinearFilter
+      return { canvas: c, texture: t, lastVersion: '' }
+    })
+  }, [])
+
+  const drawToast = (canvas: HTMLCanvasElement, version: string) => {
+    const ctx = canvas.getContext('2d')!
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    // pill bg
+    const r = 36
+    const w = canvas.width - 12
+    const h = canvas.height - 12
+    const x = 6
+    const y = 6
+    ctx.fillStyle = 'rgba(6, 10, 20, 0.92)'
+    ctx.beginPath()
+    ctx.moveTo(x + r, y)
+    ctx.lineTo(x + w - r, y)
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r)
+    ctx.lineTo(x + w, y + h - r)
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h)
+    ctx.lineTo(x + r, y + h)
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r)
+    ctx.lineTo(x, y + r)
+    ctx.quadraticCurveTo(x, y, x + r, y)
+    ctx.closePath()
+    ctx.fill()
+    ctx.strokeStyle = '#22c55e'
+    ctx.lineWidth = 3
+    ctx.stroke()
+
+    // green dot
+    ctx.fillStyle = '#22c55e'
+    ctx.beginPath()
+    ctx.arc(56, 64, 14, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowColor = '#22c55e'
+    ctx.shadowBlur = 20
+    ctx.beginPath()
+    ctx.arc(56, 64, 14, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+
+    // text
+    ctx.fillStyle = '#e2e8f0'
+    ctx.font = 'bold 34px ui-monospace, Menlo, monospace'
+    ctx.textBaseline = 'middle'
+    ctx.fillText('Deployed', 96, 50)
+    ctx.fillStyle = '#94a3b8'
+    ctx.font = '24px ui-monospace, Menlo, monospace'
+    ctx.fillText(version, 96, 86)
+  }
 
   useFrame((_, d) => {
-    for (const r of rings.current) r.t += d
-    rings.current = rings.current.filter((r) => r.t < 1.8)
+    for (const t of toasts.current) t.t += d
+    toasts.current = toasts.current.filter((t) => t.t < 2.2)
 
     for (let i = 0; i < MAX; i++) {
       const m = refs.current[i]
       if (!m) continue
-      const r = rings.current[i]
-      if (!r) {
+      const t = toasts.current[i]
+      if (!t) {
         m.visible = false
         continue
       }
       m.visible = true
-      const s = 0.5 + r.t * 3.5
-      m.scale.set(s, s, s)
-      const mat = m.material as THREE.MeshBasicMaterial
-      mat.opacity = Math.max(0, 1 - r.t / 1.8) * 0.8
+      const slot = textures[i]
+      if (slot.lastVersion !== t.version) {
+        drawToast(slot.canvas, t.version)
+        slot.texture.needsUpdate = true
+        slot.lastVersion = t.version
+        ;(m.material as THREE.MeshBasicMaterial).map = slot.texture
+      }
+      // pop-in + float up + fade
+      const pop = Math.min(1, t.t * 6)
+      const scale = pop * (1 + Math.sin(t.t * 8) * 0.05 * Math.max(0, 1 - t.t * 2))
+      m.scale.set(scale, scale, scale)
+      m.position.y = 1.3 + t.t * 0.9
+      const fade = t.t < 0.2 ? t.t / 0.2 : Math.max(0, 1 - (t.t - 1.2) / 1)
+      ;(m.material as THREE.MeshBasicMaterial).opacity = fade
     }
   })
 
@@ -228,13 +298,13 @@ function Shockwaves({ rings }: { rings: React.MutableRefObject<ShockRing[]> }) {
             if (el) refs.current[i] = el
           }}
           visible={false}
+          position={[0, 1.3, 0.2]}
         >
-          <ringGeometry args={[0.55, 0.6, 64]} />
+          <planeGeometry args={[1.6, 0.4]} />
           <meshBasicMaterial
-            color="#38bdf8"
+            map={textures[i].texture}
             transparent
             opacity={0}
-            side={THREE.DoubleSide}
             toneMapped={false}
             depthWrite={false}
           />
@@ -386,14 +456,19 @@ const DEPLOY_MESSAGES: Line[][] = [
 export default function HeroScene() {
   const progress = useScrollProgress()
   const flash = useRef(0)
-  const rings = useRef<ShockRing[]>([])
+  const toasts = useRef<Toast[]>([])
   const [hint, setHint] = useState(true)
   const msgIdx = useRef(0)
+  const versionCounter = useRef({ major: 2, minor: 14, patch: 7 })
 
   const handleScreenClick = useCallback(() => {
     setHint(false)
-    rings.current.push({ t: 0 })
-    if (rings.current.length > 4) rings.current.shift()
+    const v = versionCounter.current
+    v.patch++
+    if (v.patch > 99) { v.patch = 0; v.minor++ }
+    const version = `v${v.major}.${v.minor}.${v.patch}`
+    toasts.current.push({ t: 0, version })
+    if (toasts.current.length > 4) toasts.current.shift()
     const push = (DeployMonitor as unknown as { _push?: (l: Line[]) => void })._push
     if (push) {
       push([{ text: '', kind: 'blank' }, ...DEPLOY_MESSAGES[msgIdx.current % DEPLOY_MESSAGES.length]])
@@ -435,7 +510,7 @@ export default function HeroScene() {
         <ScrollRig progress={progress}>
           <DeployMonitor flashRef={flash} onScreenClick={handleScreenClick} />
           <DataStreams />
-          <Shockwaves rings={rings} />
+          <DeployToasts toasts={toasts} />
         </ScrollRig>
 
         <OrbitControls
