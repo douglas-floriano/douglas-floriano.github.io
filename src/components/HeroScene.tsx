@@ -459,6 +459,7 @@ export default function HeroScene() {
   const flash = useRef(0)
   const toasts = useRef<Toast[]>([])
   const [hint, setHint] = useState(true)
+  const [controlsEnabled, setControlsEnabled] = useState(true)
   const msgIdx = useRef(0)
   const versionCounter = useRef({ major: 2, minor: 14, patch: 7 })
 
@@ -498,13 +499,14 @@ export default function HeroScene() {
           <DeployMonitor flashRef={flash} onScreenClick={handleScreenClick} />
           <DataStreams />
           <DeployToasts toasts={toasts} />
-          <DeskSetup onKeyboardClick={handleScreenClick} />
+          <DeskSetup onKeyboardClick={handleScreenClick} setControlsEnabled={setControlsEnabled} />
         </ScrollRig>
 
         <OrbitControls
+          enabled={controlsEnabled}
           enablePan={false}
           enableZoom={false}
-          autoRotate
+          autoRotate={controlsEnabled}
           autoRotateSpeed={0.3}
           rotateSpeed={0.8}
           minPolarAngle={Math.PI / 3.2}

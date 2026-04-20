@@ -54,205 +54,22 @@ function Desk() {
   )
 }
 
-function Head() {
-  const SKIN = '#c89272'
-  const HAIR = '#1f1410'
-  const head = useRef<Group>(null)
 
-  useFrame((state) => {
-    if (!head.current) return
-    const t = state.clock.elapsedTime
-    head.current.rotation.y = Math.sin(t * 0.7) * 0.18
-    head.current.rotation.x = Math.sin(t * 0.5) * 0.05
-  })
-
-  return (
-    <group ref={head} position={[0, 0.88, 0]}>
-      {/* head sphere (slightly egg-shaped) */}
-      <mesh scale={[1, 1.12, 1]}>
-        <sphereGeometry args={[0.22, 32, 32]} />
-        <meshStandardMaterial color={SKIN} roughness={0.8} metalness={0} />
-      </mesh>
-
-      {/* hair cap (hemisphere covering top + back) */}
-      <mesh position={[0, 0.03, -0.01]}>
-        <sphereGeometry args={[0.235, 32, 32, 0, Math.PI * 2, 0, Math.PI * 0.52]} />
-        <meshStandardMaterial color={HAIR} roughness={0.9} />
-      </mesh>
-
-      {/* ears */}
-      <mesh position={[-0.215, 0, 0]} scale={[0.5, 1, 1]}>
-        <sphereGeometry args={[0.04, 12, 12]} />
-        <meshStandardMaterial color={SKIN} roughness={0.8} />
-      </mesh>
-      <mesh position={[0.215, 0, 0]} scale={[0.5, 1, 1]}>
-        <sphereGeometry args={[0.04, 12, 12]} />
-        <meshStandardMaterial color={SKIN} roughness={0.8} />
-      </mesh>
-
-      {/* eyebrows */}
-      <mesh position={[-0.08, 0.06, 0.2]} rotation={[0, 0, -0.05]}>
-        <boxGeometry args={[0.07, 0.012, 0.01]} />
-        <meshStandardMaterial color="#2a1a10" />
-      </mesh>
-      <mesh position={[0.08, 0.06, 0.2]} rotation={[0, 0, 0.05]}>
-        <boxGeometry args={[0.07, 0.012, 0.01]} />
-        <meshStandardMaterial color="#2a1a10" />
-      </mesh>
-
-      {/* eyes — white sclera */}
-      <mesh position={[-0.08, 0.015, 0.205]}>
-        <sphereGeometry args={[0.028, 16, 16]} />
-        <meshBasicMaterial color="#ffffff" />
-      </mesh>
-      <mesh position={[0.08, 0.015, 0.205]}>
-        <sphereGeometry args={[0.028, 16, 16]} />
-        <meshBasicMaterial color="#ffffff" />
-      </mesh>
-      {/* iris (brown) */}
-      <mesh position={[-0.08, 0.013, 0.228]}>
-        <sphereGeometry args={[0.014, 12, 12]} />
-        <meshBasicMaterial color="#3d2817" />
-      </mesh>
-      <mesh position={[0.08, 0.013, 0.228]}>
-        <sphereGeometry args={[0.014, 12, 12]} />
-        <meshBasicMaterial color="#3d2817" />
-      </mesh>
-      {/* pupil */}
-      <mesh position={[-0.08, 0.013, 0.238]}>
-        <sphereGeometry args={[0.006, 8, 8]} />
-        <meshBasicMaterial color="#0b1220" />
-      </mesh>
-      <mesh position={[0.08, 0.013, 0.238]}>
-        <sphereGeometry args={[0.006, 8, 8]} />
-        <meshBasicMaterial color="#0b1220" />
-      </mesh>
-
-      {/* round glasses — torus frames */}
-      <mesh position={[-0.08, 0.015, 0.22]}>
-        <torusGeometry args={[0.055, 0.008, 12, 32]} />
-        <meshStandardMaterial color="#0b1220" metalness={0.7} roughness={0.3} />
-      </mesh>
-      <mesh position={[0.08, 0.015, 0.22]}>
-        <torusGeometry args={[0.055, 0.008, 12, 32]} />
-        <meshStandardMaterial color="#0b1220" metalness={0.7} roughness={0.3} />
-      </mesh>
-      {/* bridge */}
-      <mesh position={[0, 0.015, 0.22]}>
-        <boxGeometry args={[0.055, 0.008, 0.008]} />
-        <meshStandardMaterial color="#0b1220" metalness={0.7} roughness={0.3} />
-      </mesh>
-      {/* temple arms */}
-      <mesh position={[-0.14, 0.015, 0.17]} rotation={[0, -0.4, 0]}>
-        <boxGeometry args={[0.09, 0.008, 0.008]} />
-        <meshStandardMaterial color="#0b1220" metalness={0.7} roughness={0.3} />
-      </mesh>
-      <mesh position={[0.14, 0.015, 0.17]} rotation={[0, 0.4, 0]}>
-        <boxGeometry args={[0.09, 0.008, 0.008]} />
-        <meshStandardMaterial color="#0b1220" metalness={0.7} roughness={0.3} />
-      </mesh>
-      {/* glass lenses (subtle tint) */}
-      <mesh position={[-0.08, 0.015, 0.218]}>
-        <circleGeometry args={[0.047, 24]} />
-        <meshBasicMaterial color="#38bdf8" transparent opacity={0.18} toneMapped={false} />
-      </mesh>
-      <mesh position={[0.08, 0.015, 0.218]}>
-        <circleGeometry args={[0.047, 24]} />
-        <meshBasicMaterial color="#38bdf8" transparent opacity={0.18} toneMapped={false} />
-      </mesh>
-
-      {/* nose */}
-      <mesh position={[0, -0.035, 0.22]} rotation={[0.1, 0, 0]}>
-        <coneGeometry args={[0.018, 0.07, 12]} />
-        <meshStandardMaterial color={SKIN} roughness={0.8} />
-      </mesh>
-
-      {/* mouth (smile) — thin torus segment */}
-      <mesh position={[0, -0.105, 0.2]} rotation={[0, 0, 0]}>
-        <torusGeometry args={[0.04, 0.006, 8, 16, Math.PI]} />
-        <meshStandardMaterial color="#6b2e24" roughness={0.5} />
-      </mesh>
-
-      {/* beard/stubble — darker patch on chin */}
-      <mesh position={[0, -0.14, 0.18]} scale={[1.3, 0.6, 0.5]}>
-        <sphereGeometry args={[0.06, 16, 16]} />
-        <meshStandardMaterial color="#3d2817" roughness={0.95} transparent opacity={0.45} />
-      </mesh>
-    </group>
-  )
-}
-
-function Character() {
-  const SKIN = '#c89272'
-  const SHIRT = '#1e3a8a'
-
-  return (
-    <group position={[0, 0.3, -0.15]}>
-      {/* torso (navy shirt) */}
-      <mesh position={[0, 0.05, 0]}>
-        <boxGeometry args={[0.6, 0.7, 0.32]} />
-        <meshStandardMaterial color={SHIRT} metalness={0.1} roughness={0.85} />
-      </mesh>
-      {/* chest neckline */}
-      <mesh position={[0, 0.38, 0.17]}>
-        <boxGeometry args={[0.3, 0.08, 0.02]} />
-        <meshStandardMaterial color="#0b1220" roughness={0.8} />
-      </mesh>
-      {/* neck */}
-      <mesh position={[0, 0.45, 0]}>
-        <cylinderGeometry args={[0.09, 0.1, 0.14, 16]} />
-        <meshStandardMaterial color={SKIN} roughness={0.75} />
-      </mesh>
-
-      {/* head (3D geometry) */}
-      <Head />
-
-      {/* arms reaching to keyboard */}
-      <mesh position={[-0.33, -0.1, 0.25]} rotation={[0.9, 0, 0.15]}>
-        <boxGeometry args={[0.13, 0.5, 0.13]} />
-        <meshStandardMaterial color={SHIRT} roughness={0.85} />
-      </mesh>
-      <mesh position={[0.33, -0.1, 0.25]} rotation={[0.9, 0, -0.15]}>
-        <boxGeometry args={[0.13, 0.5, 0.13]} />
-        <meshStandardMaterial color={SHIRT} roughness={0.85} />
-      </mesh>
-      {/* forearms (skin) */}
-      <mesh position={[-0.4, -0.35, 0.5]} rotation={[1.2, 0, 0.1]}>
-        <cylinderGeometry args={[0.055, 0.06, 0.25, 12]} />
-        <meshStandardMaterial color={SKIN} roughness={0.75} />
-      </mesh>
-      <mesh position={[0.4, -0.35, 0.5]} rotation={[1.2, 0, -0.1]}>
-        <cylinderGeometry args={[0.055, 0.06, 0.25, 12]} />
-        <meshStandardMaterial color={SKIN} roughness={0.75} />
-      </mesh>
-      {/* hands */}
-      <mesh position={[-0.43, -0.45, 0.62]}>
-        <sphereGeometry args={[0.07, 16, 16]} />
-        <meshStandardMaterial color={SKIN} roughness={0.75} />
-      </mesh>
-      <mesh position={[0.43, -0.45, 0.62]}>
-        <sphereGeometry args={[0.07, 16, 16]} />
-        <meshStandardMaterial color={SKIN} roughness={0.75} />
-      </mesh>
-    </group>
-  )
-}
-
-function Chair({ spinRef }: { spinRef: React.MutableRefObject<number> }) {
+function Chair({ setControlsEnabled }: { setControlsEnabled: (v: boolean) => void }) {
   const group = useRef<Group>(null)
   const velocity = useRef(0)
-  const { hovered, handlers } = useHover()
-  const em = hovered ? 0.6 : 0
+  const dragging = useRef<{ lastX: number; lastTime: number } | null>(null)
+  const [hovered, setHovered] = useState(false)
+  const em = hovered ? 0.5 : 0
 
   useFrame((_, d) => {
     if (!group.current) return
-    if (spinRef.current > 0) {
-      velocity.current = 10
-      spinRef.current = 0
+    if (!dragging.current) {
+      // inertia decay when not dragging
+      group.current.rotation.y += velocity.current * d
+      velocity.current *= Math.pow(0.15, d)
+      if (Math.abs(velocity.current) < 0.01) velocity.current = 0
     }
-    group.current.rotation.y += velocity.current * d
-    velocity.current *= Math.pow(0.3, d) // inertia decay
-    if (Math.abs(velocity.current) < 0.01) velocity.current = 0
   })
 
   return (
@@ -260,11 +77,49 @@ function Chair({ spinRef }: { spinRef: React.MutableRefObject<number> }) {
       ref={group}
       position={[-1.7, -1.45, 1.55]}
       rotation={[0, 0.35, 0]}
-      onClick={(e) => {
+      onPointerOver={(e) => {
         e.stopPropagation()
-        spinRef.current = 1
+        setHovered(true)
+        document.body.style.cursor = 'grab'
       }}
-      {...handlers}
+      onPointerOut={(e) => {
+        e.stopPropagation()
+        setHovered(false)
+        if (!dragging.current) document.body.style.cursor = 'auto'
+      }}
+      onPointerDown={(e) => {
+        e.stopPropagation()
+        ;(e.target as Element).setPointerCapture?.(e.pointerId)
+        dragging.current = { lastX: e.clientX, lastTime: performance.now() }
+        setControlsEnabled(false)
+        velocity.current = 0
+        document.body.style.cursor = 'grabbing'
+      }}
+      onPointerMove={(e) => {
+        if (!dragging.current || !group.current) return
+        e.stopPropagation()
+        const dx = e.clientX - dragging.current.lastX
+        const now = performance.now()
+        const dt = Math.max(1, now - dragging.current.lastTime) / 1000
+        const delta = dx * 0.01
+        group.current.rotation.y += delta
+        velocity.current = delta / dt
+        dragging.current.lastX = e.clientX
+        dragging.current.lastTime = now
+      }}
+      onPointerUp={(e) => {
+        e.stopPropagation()
+        ;(e.target as Element).releasePointerCapture?.(e.pointerId)
+        dragging.current = null
+        setControlsEnabled(true)
+        document.body.style.cursor = hovered ? 'grab' : 'auto'
+      }}
+      onPointerCancel={(e) => {
+        dragging.current = null
+        setControlsEnabled(true)
+        document.body.style.cursor = 'auto'
+        void e
+      }}
     >
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[0.75, 0.1, 0.75]} />
@@ -307,8 +162,6 @@ function Chair({ spinRef }: { spinRef: React.MutableRefObject<number> }) {
           </group>
         )
       })}
-      {/* character sitting on chair */}
-      <Character />
     </group>
   )
 }
@@ -1000,8 +853,13 @@ function RubberDuck() {
   )
 }
 
-export default function DeskSetup({ onKeyboardClick }: { onKeyboardClick: () => void }) {
-  const spinChair = useRef(0)
+export default function DeskSetup({
+  onKeyboardClick,
+  setControlsEnabled,
+}: {
+  onKeyboardClick: () => void
+  setControlsEnabled: (v: boolean) => void
+}) {
   const steam = useRef<Steam[]>([])
   const leaves = useRef<Leaf[]>([])
   const typing = useRef(0)
@@ -1011,7 +869,7 @@ export default function DeskSetup({ onKeyboardClick }: { onKeyboardClick: () => 
   return (
     <group>
       <Desk />
-      <Chair spinRef={spinChair} />
+      <Chair setControlsEnabled={setControlsEnabled} />
       <Keyboard onType={onKeyboardClick} typingRef={typing} />
       <Mouse cursorFliesRef={cursorFlies} />
       <CursorFlies fliesRef={cursorFlies} />
