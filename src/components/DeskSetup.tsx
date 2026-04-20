@@ -8,30 +8,43 @@ function useCroppedFaceTexture(url: string | undefined) {
   const [texture, setTexture] = useState<THREE.Texture | null>(null)
   useEffect(() => {
     if (!url) return
-    const loader = new THREE.TextureLoader()
-    loader.load(
-      url,
-      (t) => {
-        t.colorSpace = THREE.SRGBColorSpace
-        // Reference photo is 2268×4032 portrait selfie.
-        // Face (hair top → chin) sits roughly from y=28% to y=50% of the image.
-        // THREE's UV origin is bottom-left, so offset.y = 1 - (top + height).
-        const TOP = 0.26
-        const HEIGHT = 0.24
+    const img = new Image()
+    img.decoding = 'async'
+    img.onload = () => {
+      try {
+        // Reference photo 2268×4032: face sits roughly x=24-76%, y=26-50%
         const LEFT = 0.24
+        const TOP = 0.26
         const WIDTH = 0.52
-        t.repeat.set(WIDTH, HEIGHT)
-        t.offset.set(LEFT, 1 - TOP - HEIGHT)
-        t.wrapS = THREE.ClampToEdgeWrapping
-        t.wrapT = THREE.ClampToEdgeWrapping
+        const HEIGHT = 0.24
+        const sx = img.naturalWidth * LEFT
+        const sy = img.naturalHeight * TOP
+        const sw = img.naturalWidth * WIDTH
+        const sh = img.naturalHeight * HEIGHT
+        const canvas = document.createElement('canvas')
+        canvas.width = 512
+        canvas.height = 512
+        const ctx = canvas.getContext('2d')
+        if (!ctx) { setTexture(null); return }
+        ctx.fillStyle = '#b07858'
+        ctx.fillRect(0, 0, 512, 512)
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 512, 512)
+        const t = new THREE.CanvasTexture(canvas)
+        t.colorSpace = THREE.SRGBColorSpace
         t.minFilter = THREE.LinearFilter
         t.magFilter = THREE.LinearFilter
         t.needsUpdate = true
         setTexture(t)
-      },
-      undefined,
-      () => setTexture(null),
-    )
+      } catch (err) {
+        console.error('[face-texture] draw failed', err)
+        setTexture(null)
+      }
+    }
+    img.onerror = (err) => {
+      console.error('[face-texture] image load failed', url, err)
+      setTexture(null)
+    }
+    img.src = url
   }, [url])
   return texture
 }
