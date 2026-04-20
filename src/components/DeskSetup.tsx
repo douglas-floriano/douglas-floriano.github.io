@@ -1,8 +1,44 @@
-import { useRef, useState, useMemo } from 'react'
+import { useRef, useState, useMemo, useEffect } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Text } from '@react-three/drei'
+import { Text, Billboard } from '@react-three/drei'
 import * as THREE from 'three'
 import type { Group, Mesh, PointLight } from 'three'
+
+function useCroppedFaceTexture(url: string | undefined) {
+  const [texture, setTexture] = useState<THREE.Texture | null>(null)
+  useEffect(() => {
+    if (!url) return
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.src = url
+    img.onload = () => {
+      // Crop tightly to the head area of the reference photo (2268x4032 selfie)
+      const sx = img.width * 0.22
+      const sy = img.height * 0.42
+      const sw = img.width * 0.54
+      const sh = sw // square crop
+      const c = document.createElement('canvas')
+      c.width = 512
+      c.height = 512
+      const ctx = c.getContext('2d')!
+      ctx.clearRect(0, 0, 512, 512)
+      // circular mask for soft head silhouette
+      ctx.save()
+      ctx.beginPath()
+      ctx.ellipse(256, 256, 240, 250, 0, 0, Math.PI * 2)
+      ctx.closePath()
+      ctx.clip()
+      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 512, 512)
+      ctx.restore()
+      const t = new THREE.CanvasTexture(c)
+      t.colorSpace = THREE.SRGBColorSpace
+      t.needsUpdate = true
+      setTexture(t)
+    }
+    img.onerror = () => setTexture(null)
+  }, [url])
+  return texture
+}
 
 const DESK_Y = -1.79
 const DESK_TOP = DESK_Y + 0.05
@@ -55,88 +91,71 @@ function Desk() {
 }
 
 function Character({ avatarUrl }: { avatarUrl?: string }) {
-  const faceTex = useMemo(() => {
-    if (avatarUrl) {
-      const t = new THREE.TextureLoader().load(avatarUrl)
-      t.colorSpace = THREE.SRGBColorSpace
-      return t
-    }
-    const c = document.createElement('canvas')
-    c.width = 256; c.height = 256
-    const ctx = c.getContext('2d')!
-    // skin
-    ctx.fillStyle = '#d8a37a'
-    ctx.fillRect(0, 0, 256, 256)
-    // hair
-    ctx.fillStyle = '#1f2937'
-    ctx.fillRect(0, 0, 256, 70)
-    ctx.beginPath(); ctx.arc(128, 75, 90, Math.PI, Math.PI * 2); ctx.fill()
-    // eyes
-    ctx.fillStyle = '#0b1220'
-    ctx.beginPath(); ctx.arc(92, 132, 10, 0, Math.PI * 2); ctx.fill()
-    ctx.beginPath(); ctx.arc(164, 132, 10, 0, Math.PI * 2); ctx.fill()
-    ctx.fillStyle = '#38bdf8'
-    ctx.beginPath(); ctx.arc(92, 130, 3, 0, Math.PI * 2); ctx.fill()
-    ctx.beginPath(); ctx.arc(164, 130, 3, 0, Math.PI * 2); ctx.fill()
-    // smile
-    ctx.strokeStyle = '#3d1f12'
-    ctx.lineWidth = 5
-    ctx.beginPath(); ctx.arc(128, 180, 28, 0.1 * Math.PI, 0.9 * Math.PI); ctx.stroke()
-    // beard hint
-    ctx.fillStyle = 'rgba(31,41,55,0.35)'
-    ctx.beginPath(); ctx.arc(128, 200, 55, 0, Math.PI); ctx.fill()
-    const t = new THREE.CanvasTexture(c)
-    return t
-  }, [avatarUrl])
-
-  const head = useRef<Group>(null)
-  useFrame((state) => {
-    if (!head.current) return
-    const t = state.clock.elapsedTime
-    head.current.rotation.y = Math.sin(t * 0.7) * 0.15
-    head.current.rotation.x = Math.sin(t * 0.5) * 0.05
-  })
+  const faceTex = useCroppedFaceTexture(avatarUrl)
+  const SKIN = '#b07858'
+  const SHIRT = '#1e3a8a'
 
   return (
     <group position={[0, 0.3, -0.15]}>
-      {/* torso */}
+      {/* torso (navy shirt) */}
       <mesh position={[0, 0.05, 0]}>
-        <boxGeometry args={[0.55, 0.7, 0.3]} />
-        <meshStandardMaterial color="#1e40af" metalness={0.2} roughness={0.75} />
+        <boxGeometry args={[0.6, 0.7, 0.32]} />
+        <meshStandardMaterial color={SHIRT} metalness={0.1} roughness={0.85} />
       </mesh>
-      {/* collar */}
-      <mesh position={[0, 0.38, 0.08]}>
-        <boxGeometry args={[0.35, 0.1, 0.18]} />
-        <meshStandardMaterial color="#0b1220" roughness={0.6} />
+      {/* chest neckline */}
+      <mesh position={[0, 0.38, 0.17]}>
+        <boxGeometry args={[0.3, 0.08, 0.02]} />
+        <meshStandardMaterial color="#0b1220" roughness={0.8} />
       </mesh>
-      {/* head */}
-      <group ref={head} position={[0, 0.55, 0]}>
+      {/* neck */}
+      <mesh position={[0, 0.45, 0]}>
+        <cylinderGeometry args={[0.09, 0.1, 0.14, 16]} />
+        <meshStandardMaterial color={SKIN} roughness={0.75} />
+      </mesh>
+
+      {/* head — billboarded photo always facing camera for max fidelity */}
+      <Billboard position={[0, 0.66, 0]} follow lockX={false} lockY={false} lockZ={false}>
+        {/* soft glow halo behind */}
+        <mesh position={[0, 0, -0.01]}>
+          <circleGeometry args={[0.3, 32]} />
+          <meshBasicMaterial color="#1e40af" transparent opacity={0.25} toneMapped={false} />
+        </mesh>
         <mesh>
-          <sphereGeometry args={[0.22, 24, 24]} />
-          <meshStandardMaterial color="#d8a37a" roughness={0.7} />
+          <circleGeometry args={[0.26, 48]} />
+          {faceTex ? (
+            <meshBasicMaterial map={faceTex} toneMapped={false} transparent />
+          ) : (
+            <meshBasicMaterial color={SKIN} />
+          )}
         </mesh>
-        <mesh position={[0, 0, 0.2]}>
-          <planeGeometry args={[0.32, 0.32]} />
-          <meshBasicMaterial map={faceTex} toneMapped={false} transparent />
-        </mesh>
-      </group>
+      </Billboard>
+
       {/* arms reaching to keyboard */}
-      <mesh position={[-0.3, -0.1, 0.25]} rotation={[0.9, 0, 0.15]}>
-        <boxGeometry args={[0.12, 0.5, 0.12]} />
-        <meshStandardMaterial color="#1e40af" />
+      <mesh position={[-0.33, -0.1, 0.25]} rotation={[0.9, 0, 0.15]}>
+        <boxGeometry args={[0.13, 0.5, 0.13]} />
+        <meshStandardMaterial color={SHIRT} roughness={0.85} />
       </mesh>
-      <mesh position={[0.3, -0.1, 0.25]} rotation={[0.9, 0, -0.15]}>
-        <boxGeometry args={[0.12, 0.5, 0.12]} />
-        <meshStandardMaterial color="#1e40af" />
+      <mesh position={[0.33, -0.1, 0.25]} rotation={[0.9, 0, -0.15]}>
+        <boxGeometry args={[0.13, 0.5, 0.13]} />
+        <meshStandardMaterial color={SHIRT} roughness={0.85} />
+      </mesh>
+      {/* forearms (skin) */}
+      <mesh position={[-0.4, -0.35, 0.5]} rotation={[1.2, 0, 0.1]}>
+        <cylinderGeometry args={[0.055, 0.06, 0.25, 12]} />
+        <meshStandardMaterial color={SKIN} roughness={0.75} />
+      </mesh>
+      <mesh position={[0.4, -0.35, 0.5]} rotation={[1.2, 0, -0.1]}>
+        <cylinderGeometry args={[0.055, 0.06, 0.25, 12]} />
+        <meshStandardMaterial color={SKIN} roughness={0.75} />
       </mesh>
       {/* hands */}
-      <mesh position={[-0.38, -0.35, 0.55]}>
-        <sphereGeometry args={[0.07, 12, 12]} />
-        <meshStandardMaterial color="#d8a37a" roughness={0.7} />
+      <mesh position={[-0.43, -0.45, 0.62]}>
+        <sphereGeometry args={[0.07, 16, 16]} />
+        <meshStandardMaterial color={SKIN} roughness={0.75} />
       </mesh>
-      <mesh position={[0.38, -0.35, 0.55]}>
-        <sphereGeometry args={[0.07, 12, 12]} />
-        <meshStandardMaterial color="#d8a37a" roughness={0.7} />
+      <mesh position={[0.43, -0.45, 0.62]}>
+        <sphereGeometry args={[0.07, 16, 16]} />
+        <meshStandardMaterial color={SKIN} roughness={0.75} />
       </mesh>
     </group>
   )

@@ -498,7 +498,7 @@ export default function HeroScene() {
           <DeployMonitor flashRef={flash} onScreenClick={handleScreenClick} />
           <DataStreams />
           <DeployToasts toasts={toasts} />
-          <DeskSetup onKeyboardClick={handleScreenClick} />
+          <DeskSetup onKeyboardClick={handleScreenClick} avatarUrl={`${import.meta.env.BASE_URL}douglas.jpeg`} />
         </ScrollRig>
 
         <OrbitControls
