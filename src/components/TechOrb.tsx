@@ -1,6 +1,6 @@
 import { Canvas, useFrame } from '@react-three/fiber'
 import { Float, Html, OrbitControls, Sphere, Environment } from '@react-three/drei'
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useRef } from 'react'
 import type { Group } from 'three'
 
 type Tech = { name: string; icon: string; url: string }
@@ -40,27 +40,17 @@ function fibonacciSphere(samples: number, radius: number) {
 }
 
 function TechChip({ tech }: { tech: Tech }) {
-  const [hover, setHover] = useState(false)
   return (
     <Html center distanceFactor={3.6} zIndexRange={[20, 0]}>
       <a
         href={tech.url}
         target="_blank"
         rel="noreferrer"
-        onPointerOver={() => setHover(true)}
-        onPointerOut={() => setHover(false)}
         className="tech-chip"
-        style={{
-          transform: hover ? 'scale(1.35)' : 'scale(1)',
-          boxShadow: hover
-            ? '0 0 36px rgba(20,184,166,0.75), 0 0 12px rgba(245,158,11,0.4)'
-            : '0 4px 18px rgba(0,0,0,0.5)',
-        }}
+        aria-label={tech.name}
       >
         <img src={tech.icon} alt={tech.name} draggable={false} />
-        <span className="tech-chip-label" style={{ opacity: hover ? 1 : 0 }}>
-          {tech.name}
-        </span>
+        <span className="tech-chip-label">{tech.name}</span>
       </a>
     </Html>
   )
