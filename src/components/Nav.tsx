@@ -25,7 +25,7 @@ export default function Nav() {
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[min(480px,92vw)]"
+        className="fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[min(880px,92vw)]"
       >
         <div className="glass glow-border rounded-full px-4 sm:px-5 py-2.5 sm:py-3 flex items-center justify-between gap-3">
           <a href="#top" className="flex items-center gap-2 font-display font-bold shrink-0">
@@ -33,13 +33,25 @@ export default function Nav() {
             <span className="hidden sm:inline text-white text-sm lg:text-base">Douglas Floriano</span>
           </a>
 
+          <ul className="hidden lg:flex items-center gap-0.5 min-w-0">
+            {links.map((l) => (
+              <li key={l.href}>
+                <a
+                  href={l.href}
+                  className="px-2.5 xl:px-3 py-1.5 text-sm text-gray-300 hover:text-white rounded-full hover:bg-white/5 transition whitespace-nowrap"
+                >
+                  {l.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+
           <button
             aria-label="Abrir menu"
             onClick={() => setOpen((v) => !v)}
-            className="inline-flex items-center gap-2 h-9 px-3 rounded-full bg-white/5 hover:bg-white/10 transition shrink-0"
+            className="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition shrink-0"
           >
             {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            <span className="text-xs font-mono uppercase tracking-wider text-gray-300 hidden sm:inline">menu</span>
           </button>
         </div>
       </motion.nav>
@@ -51,7 +63,7 @@ export default function Nav() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-20 left-1/2 z-40 -translate-x-1/2 w-[min(420px,92vw)]"
+            className="fixed top-20 left-1/2 z-40 -translate-x-1/2 w-[min(420px,92vw)] lg:hidden"
           >
             <div className="glass glow-border rounded-2xl p-4">
               <ul className="flex flex-col gap-1">
