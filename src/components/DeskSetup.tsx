@@ -8,34 +8,30 @@ function useCroppedFaceTexture(url: string | undefined) {
   const [texture, setTexture] = useState<THREE.Texture | null>(null)
   useEffect(() => {
     if (!url) return
-    const img = new Image()
-    img.crossOrigin = 'anonymous'
-    img.src = url
-    img.onload = () => {
-      // Crop tightly to the head area of the reference photo (2268x4032 selfie)
-      const sx = img.width * 0.22
-      const sy = img.height * 0.42
-      const sw = img.width * 0.54
-      const sh = sw // square crop
-      const c = document.createElement('canvas')
-      c.width = 512
-      c.height = 512
-      const ctx = c.getContext('2d')!
-      ctx.clearRect(0, 0, 512, 512)
-      // circular mask for soft head silhouette
-      ctx.save()
-      ctx.beginPath()
-      ctx.ellipse(256, 256, 240, 250, 0, 0, Math.PI * 2)
-      ctx.closePath()
-      ctx.clip()
-      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, 512, 512)
-      ctx.restore()
-      const t = new THREE.CanvasTexture(c)
-      t.colorSpace = THREE.SRGBColorSpace
-      t.needsUpdate = true
-      setTexture(t)
-    }
-    img.onerror = () => setTexture(null)
+    const loader = new THREE.TextureLoader()
+    loader.load(
+      url,
+      (t) => {
+        t.colorSpace = THREE.SRGBColorSpace
+        // Reference photo is 2268×4032 portrait selfie.
+        // Face (hair top → chin) sits roughly from y=28% to y=50% of the image.
+        // THREE's UV origin is bottom-left, so offset.y = 1 - (top + height).
+        const TOP = 0.26
+        const HEIGHT = 0.24
+        const LEFT = 0.24
+        const WIDTH = 0.52
+        t.repeat.set(WIDTH, HEIGHT)
+        t.offset.set(LEFT, 1 - TOP - HEIGHT)
+        t.wrapS = THREE.ClampToEdgeWrapping
+        t.wrapT = THREE.ClampToEdgeWrapping
+        t.minFilter = THREE.LinearFilter
+        t.magFilter = THREE.LinearFilter
+        t.needsUpdate = true
+        setTexture(t)
+      },
+      undefined,
+      () => setTexture(null),
+    )
   }, [url])
   return texture
 }
@@ -114,19 +110,25 @@ function Character({ avatarUrl }: { avatarUrl?: string }) {
       </mesh>
 
       {/* head — billboarded photo always facing camera for max fidelity */}
-      <Billboard position={[0, 0.66, 0]} follow lockX={false} lockY={false} lockZ={false}>
+      <Billboard position={[0, 0.85, 0]} follow lockX={false} lockY={false} lockZ={false}>
         {/* soft glow halo behind */}
-        <mesh position={[0, 0, -0.01]}>
-          <circleGeometry args={[0.3, 32]} />
-          <meshBasicMaterial color="#1e40af" transparent opacity={0.25} toneMapped={false} />
+        <mesh position={[0, 0, -0.02]}>
+          <circleGeometry args={[0.42, 32]} />
+          <meshBasicMaterial color="#1e40af" transparent opacity={0.35} toneMapped={false} />
         </mesh>
-        <mesh>
-          <circleGeometry args={[0.26, 48]} />
+        {/* photo face */}
+        <mesh position={[0, 0, 0]}>
+          <planeGeometry args={[0.7, 0.7]} />
           {faceTex ? (
-            <meshBasicMaterial map={faceTex} toneMapped={false} transparent />
+            <meshBasicMaterial map={faceTex} toneMapped={false} />
           ) : (
             <meshBasicMaterial color={SKIN} />
           )}
+        </mesh>
+        {/* subtle cyan rim */}
+        <mesh position={[0, 0, -0.01]}>
+          <ringGeometry args={[0.36, 0.39, 48]} />
+          <meshBasicMaterial color="#38bdf8" transparent opacity={0.55} toneMapped={false} />
         </mesh>
       </Billboard>
 
