@@ -32,7 +32,6 @@ const projects: Project[] = [
     ],
     tech: ['Laravel 10', 'React', 'AWS ECS', 'RDS MariaDB', 'CloudFront', 'Horizon', 'Docker'],
     accent: 'from-brand-cyan to-brand-violet',
-    link: { label: 'admin.walletlote.app.br', href: 'https://admin.walletlote.app.br' },
   },
   {
     icon: TrendingUp,

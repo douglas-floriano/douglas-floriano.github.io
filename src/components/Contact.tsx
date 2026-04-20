@@ -18,18 +18,18 @@ export default function Contact() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.7 }}
-          className="relative glass glow-border rounded-3xl p-10 sm:p-14 overflow-hidden"
+          className="relative glass glow-border rounded-3xl p-6 sm:p-10 lg:p-14 overflow-hidden"
         >
           <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-brand-cyan/20 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-brand-pink/20 blur-3xl" />
 
           <div className="relative text-center max-w-2xl mx-auto">
             <span className="inline-block text-xs font-mono uppercase tracking-[0.24em] text-brand-cyan">Contato</span>
-            <h2 className="mt-3 font-display text-4xl sm:text-5xl font-bold text-white">
+            <h2 className="mt-3 font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight break-words">
               Pronto para construir <span className="gradient-text">o próximo</span>?
             </h2>
-            <p className="mt-4 text-gray-400 text-lg">
-              Projetos novos, consultoria de arquitetura, revisão de infra AWS ou integração de WhatsApp em escala — me chama, eu respondo rápido.
+            <p className="mt-4 text-gray-400 text-base sm:text-lg">
+              Projetos novos, consultoria de arquitetura, revisão de infra AWS ou integração em escala — me chama, eu respondo rápido.
             </p>
 
             <div className="mt-8 flex items-center justify-center gap-2 text-sm text-gray-400">
@@ -45,14 +45,14 @@ export default function Contact() {
                     href={c.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 hover:bg-white/[0.06] hover:border-white/20 transition"
+                    className="group flex items-center gap-3 sm:gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-3 sm:p-4 hover:bg-white/[0.06] hover:border-white/20 transition min-w-0"
                   >
-                    <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand-cyan/30 to-brand-violet/30 ring-1 ring-white/10">
+                    <div className="inline-flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl bg-gradient-to-br from-brand-cyan/30 to-brand-violet/30 ring-1 ring-white/10 shrink-0">
                       <Icon className="h-5 w-5 text-white" />
                     </div>
-                    <div className="text-left">
+                    <div className="text-left min-w-0 flex-1">
                       <div className="text-xs font-mono uppercase tracking-wider text-gray-500">{c.label}</div>
-                      <div className="text-white text-sm">{c.value}</div>
+                      <div className="text-white text-sm truncate">{c.value}</div>
                     </div>
                   </a>
                 )
