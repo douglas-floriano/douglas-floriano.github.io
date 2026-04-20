@@ -1,5 +1,6 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { OrbitControls, Stars, Environment, Grid } from '@react-three/drei'
+import { OrbitControls, Stars, Environment } from '@react-three/drei'
+import DeskSetup from './DeskSetup'
 import { useRef, useMemo, useEffect, useState, useCallback } from 'react'
 import type { Group, Mesh } from 'three'
 import * as THREE from 'three'
@@ -493,24 +494,11 @@ export default function HeroScene() {
         <Environment preset="night" />
         <Stars radius={60} depth={70} count={1500} factor={3} saturation={0} fade speed={1} />
 
-        <Grid
-          position={[0, -1.9, 0]}
-          args={[20, 20]}
-          cellSize={0.6}
-          cellThickness={0.6}
-          cellColor="#1e3a8a"
-          sectionSize={3}
-          sectionThickness={1.2}
-          sectionColor="#38bdf8"
-          fadeDistance={14}
-          fadeStrength={1.5}
-          infiniteGrid
-        />
-
         <ScrollRig progress={progress}>
           <DeployMonitor flashRef={flash} onScreenClick={handleScreenClick} />
           <DataStreams />
           <DeployToasts toasts={toasts} />
+          <DeskSetup onKeyboardClick={handleScreenClick} />
         </ScrollRig>
 
         <OrbitControls
@@ -519,12 +507,12 @@ export default function HeroScene() {
           autoRotate
           autoRotateSpeed={0.3}
           rotateSpeed={0.8}
-          minPolarAngle={Math.PI / 2.6}
-          maxPolarAngle={(2 * Math.PI) / 3}
+          minPolarAngle={Math.PI / 3.2}
+          maxPolarAngle={(2.1 * Math.PI) / 3}
         />
       </Canvas>
       <div className="pointer-events-none absolute bottom-3 right-4 text-[10px] font-mono text-white/40 uppercase tracking-wider">
-        {hint ? 'clique no monitor · arraste · role' : 'deploy · arrastar · rolar'}
+        {hint ? 'clique nos objetos · arraste · role' : 'interaja · arraste · role'}
       </div>
     </div>
   )
