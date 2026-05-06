@@ -69,7 +69,7 @@ const groups: { title: string; items: Tech[] }[] = [
 
 export default function Stack() {
   return (
-    <section id="stack" className="relative py-28 px-6">
+    <section id="stack" className="relative py-20 sm:py-24 lg:py-28 px-4 sm:px-6">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           eyebrow="Stack"
@@ -82,7 +82,7 @@ export default function Stack() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.9 }}
-          className="relative mb-10 h-[420px] sm:h-[480px] rounded-3xl overflow-hidden glass glow-border touch-none"
+          className="relative mb-8 sm:mb-10 h-[340px] sm:h-[440px] lg:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden glass glow-border touch-none"
         >
           <Suspense fallback={<div className="w-full h-full bg-gradient-to-br from-brand-violet/10 to-brand-cyan/10 animate-pulse" />}>
             <TechOrb />
@@ -101,7 +101,7 @@ export default function Stack() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.5, delay: idx * 0.05 }}
-              className="glass glow-border rounded-2xl p-6"
+              className="glass glow-border rounded-2xl p-5 sm:p-6"
             >
               <div className="flex items-center gap-2 mb-4">
                 <span className="font-mono text-xs text-brand-cyan">{String(idx + 1).padStart(2, '0')}</span>

@@ -1,5 +1,5 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { OrbitControls, Stars, Environment } from '@react-three/drei'
+import { OrbitControls, Stars } from '@react-three/drei'
 import DeskSetup from './DeskSetup'
 import { useRef, useMemo, useEffect, useState, useCallback } from 'react'
 import type { Group, Mesh } from 'three'
@@ -481,9 +481,10 @@ export default function HeroScene() {
   return (
     <div className="relative w-full h-full">
       <Canvas
-        dpr={[1, 2]}
+        dpr={[1, 1.6]}
         camera={{ position: [0, 0.2, 5.5], fov: 52 }}
-        gl={{ antialias: true, alpha: true }}
+        gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+        performance={{ min: 0.5 }}
       >
         <color attach="background" args={[0, 0, 0]} />
         <fog attach="fog" args={['#03060d', 6, 14]} />
@@ -492,8 +493,7 @@ export default function HeroScene() {
         <pointLight position={[-5, -3, 2]} intensity={1} color="#1e40af" />
         <MouseLight />
 
-        <Environment preset="night" />
-        <Stars radius={60} depth={70} count={1500} factor={3} saturation={0} fade speed={1} />
+        <Stars radius={60} depth={70} count={900} factor={3} saturation={0} fade speed={1} />
 
         <ScrollRig progress={progress}>
           <DeployMonitor flashRef={flash} onScreenClick={handleScreenClick} />

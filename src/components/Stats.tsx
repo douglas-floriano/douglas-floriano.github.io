@@ -30,9 +30,9 @@ function Counter({ to, suffix }: { to: number; suffix: string }) {
 
 export default function Stats() {
   return (
-    <section className="relative px-6">
+    <section className="relative px-4 sm:px-6">
       <div className="mx-auto max-w-7xl">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
           {stats.map((s, i) => (
             <motion.div
               key={s.label}
@@ -40,14 +40,14 @@ export default function Stats() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
-              className="relative glass glow-border rounded-2xl p-6 sm:p-7 overflow-hidden"
+              className="relative glass glow-border rounded-2xl p-4 sm:p-6 lg:p-7 overflow-hidden"
             >
               <div className="pointer-events-none absolute -top-12 -right-12 h-32 w-32 rounded-full bg-brand-violet/10 blur-3xl" />
               <div className="relative">
-                <div className="font-display text-4xl sm:text-5xl font-bold gradient-text leading-none">
+                <div className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold gradient-text leading-none break-words">
                   <Counter to={s.value} suffix={s.suffix} />
                 </div>
-                <div className="mt-3 text-xs sm:text-sm text-gray-400 uppercase tracking-wider font-mono">
+                <div className="mt-2 sm:mt-3 text-[10px] sm:text-xs lg:text-sm text-gray-400 uppercase tracking-wider font-mono leading-snug">
                   {s.label}
                 </div>
               </div>

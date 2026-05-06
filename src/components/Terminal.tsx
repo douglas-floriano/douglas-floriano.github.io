@@ -183,7 +183,7 @@ export default function Terminal() {
   }
 
   return (
-    <section id="terminal" className="relative py-28 px-6">
+    <section id="terminal" className="relative py-20 sm:py-24 lg:py-28 px-4 sm:px-6">
       <div className="mx-auto max-w-5xl">
         <SectionHeader
           eyebrow="Shell"
@@ -203,12 +203,12 @@ export default function Terminal() {
             <span className="h-3 w-3 rounded-full bg-[#ff5f56]" />
             <span className="h-3 w-3 rounded-full bg-[#ffbd2e]" />
             <span className="h-3 w-3 rounded-full bg-[#27c93f]" />
-            <span className="ml-3 font-mono text-xs text-gray-500">~ douglas@portfolio — zsh</span>
+            <span className="ml-2 sm:ml-3 font-mono text-[10px] sm:text-xs text-gray-500 truncate">~ douglas@portfolio — zsh</span>
           </div>
 
           <div
             ref={scrollRef}
-            className="p-5 h-[420px] overflow-y-auto font-mono text-[13px] leading-relaxed"
+            className="p-3 sm:p-5 h-[360px] sm:h-[420px] overflow-y-auto overflow-x-auto font-mono text-[11px] sm:text-[13px] leading-relaxed"
             style={{ scrollbarWidth: 'thin' }}
           >
             {lines.map((l, i) => (

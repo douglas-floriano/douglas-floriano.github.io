@@ -122,7 +122,7 @@ function CategoryBadge({ category }: { category: Project['category'] }) {
 
 export default function Projects() {
   return (
-    <section id="projetos" className="relative py-28 px-6">
+    <section id="projetos" className="relative py-20 sm:py-24 lg:py-28 px-4 sm:px-6">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           eyebrow="Projetos"
@@ -140,7 +140,7 @@ export default function Projects() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-80px' }}
                 transition={{ duration: 0.7, delay: idx * 0.05 }}
-                className="relative glass glow-border rounded-3xl p-6 sm:p-10 overflow-hidden"
+                className="relative glass glow-border rounded-2xl sm:rounded-3xl p-5 sm:p-8 lg:p-10 overflow-hidden"
               >
                 <div className={`pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-gradient-to-br ${p.accent} opacity-20 blur-3xl`} />
 
@@ -154,9 +154,9 @@ export default function Projects() {
                       <CategoryBadge category={p.category} />
                     </div>
 
-                    <h3 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">{p.title}</h3>
-                    <p className="text-gray-400 text-base sm:text-lg mb-5">{p.subtitle}</p>
-                    <p className="text-gray-300 leading-relaxed mb-6">{p.description}</p>
+                    <h3 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 break-words">{p.title}</h3>
+                    <p className="text-gray-400 text-sm sm:text-base lg:text-lg mb-4 sm:mb-5">{p.subtitle}</p>
+                    <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-5 sm:mb-6">{p.description}</p>
 
                     <div className="flex flex-wrap gap-2 mb-6">
                       {p.tech.map((t) => (
@@ -183,7 +183,7 @@ export default function Projects() {
                   </div>
 
                   <div className="lg:col-span-5">
-                    <div className="rounded-2xl border border-white/10 bg-ink-800/60 p-5">
+                    <div className="rounded-xl sm:rounded-2xl border border-white/10 bg-ink-800/60 p-4 sm:p-5">
                       <p className="text-xs font-mono text-brand-cyan uppercase tracking-wider mb-3">Destaques</p>
                       <ul className="space-y-2.5">
                         {p.highlights.map((h) => (

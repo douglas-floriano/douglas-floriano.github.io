@@ -11,21 +11,21 @@ const channels = [
 
 export default function Contact() {
   return (
-    <section id="contato" className="relative py-28 px-6">
+    <section id="contato" className="relative py-20 sm:py-24 lg:py-28 px-4 sm:px-6">
       <div className="mx-auto max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: 0.7 }}
-          className="relative glass glow-border rounded-3xl p-6 sm:p-10 lg:p-14 overflow-hidden"
+          className="relative glass glow-border rounded-2xl sm:rounded-3xl p-5 sm:p-10 lg:p-14 overflow-hidden"
         >
           <div className="pointer-events-none absolute -top-24 -left-24 h-72 w-72 rounded-full bg-brand-cyan/20 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-brand-pink/20 blur-3xl" />
 
           <div className="relative text-center max-w-2xl mx-auto">
             <span className="inline-block text-xs font-mono uppercase tracking-[0.24em] text-brand-cyan">Contato</span>
-            <h2 className="mt-3 font-display text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight break-words">
+            <h2 className="mt-3 font-display text-[clamp(1.75rem,6vw,2.5rem)] sm:text-4xl lg:text-5xl font-bold text-white leading-tight break-words">
               Pronto para construir <span className="gradient-text">o próximo</span>?
             </h2>
             <p className="mt-4 text-gray-400 text-base sm:text-lg">

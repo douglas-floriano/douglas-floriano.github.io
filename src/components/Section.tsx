@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 
 export function SectionHeader({ eyebrow, title, description }: { eyebrow: string; title: ReactNode; description?: string }) {
   return (
-    <div className="max-w-3xl mb-14">
+    <div className="max-w-3xl mb-10 sm:mb-14">
       <motion.span
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -18,7 +18,7 @@ export function SectionHeader({ eyebrow, title, description }: { eyebrow: string
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-80px' }}
         transition={{ duration: 0.6, delay: 0.05 }}
-        className="mt-3 font-display text-4xl sm:text-5xl font-bold text-white leading-tight"
+        className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-tight tracking-tight break-words"
       >
         {title}
       </motion.h2>
@@ -28,7 +28,7 @@ export function SectionHeader({ eyebrow, title, description }: { eyebrow: string
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mt-4 text-lg text-gray-400"
+          className="mt-4 text-base sm:text-lg text-gray-400 leading-relaxed"
         >
           {description}
         </motion.p>

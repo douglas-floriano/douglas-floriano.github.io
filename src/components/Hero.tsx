@@ -7,8 +7,8 @@ const HeroScene = lazy(() => import('./HeroScene'))
 
 export default function Hero() {
   return (
-    <section id="top" className="relative min-h-[100svh] flex items-center pt-28 pb-16">
-      <div className="mx-auto max-w-7xl px-6 w-full grid lg:grid-cols-12 gap-10 items-center">
+    <section id="top" className="relative min-h-[100svh] flex items-center pt-24 sm:pt-28 pb-12 sm:pb-16">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 w-full grid lg:grid-cols-12 gap-8 sm:gap-10 items-center">
         <div className="lg:col-span-6 relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -24,17 +24,17 @@ export default function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.05 }}
-            className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.05] tracking-tight text-white"
+            className="font-display text-[clamp(2.1rem,8vw,3rem)] sm:text-6xl lg:text-7xl font-bold leading-[1.08] tracking-tight text-white break-words"
           >
-            Construo <span className="gradient-text">SaaS escaláveis</span><br />
-            do banco ao pixel.
+            Construo <span className="gradient-text">SaaS escaláveis</span>{' '}
+            <span className="block">do banco ao pixel.</span>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="mt-6 text-lg text-gray-400 max-w-xl"
+            className="mt-5 sm:mt-6 text-base sm:text-lg text-gray-400 max-w-xl leading-relaxed"
           >
             Sou <b className="text-white">Douglas Floriano Costa</b>, Desenvolvedor Senior FullStack.
             Projeto e entrego sistemas em produção — de arquitetura AWS a interfaces polidas em React — para loteadoras, incorporadoras, bares e operações que não podem parar.
@@ -48,7 +48,7 @@ export default function Hero() {
           >
             <a
               href="#projetos"
-              className="group inline-flex items-center gap-2 px-5 py-3 rounded-full bg-gradient-to-r from-brand-cyan to-brand-violet text-ink-900 font-semibold hover:shadow-[0_0_40px_rgba(168,85,247,0.55)] transition-shadow"
+              className="group inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-gradient-to-r from-brand-cyan to-brand-violet text-ink-900 font-semibold hover:shadow-[0_0_40px_rgba(168,85,247,0.55)] transition-shadow text-sm sm:text-base"
             >
               Ver projetos
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -57,7 +57,7 @@ export default function Hero() {
               href="https://github.com/douglas-floriano"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-full glass hover:bg-white/5 transition"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full glass hover:bg-white/5 transition text-sm sm:text-base"
             >
               <GithubIcon className="h-4 w-4" /> GitHub
             </a>
@@ -65,7 +65,7 @@ export default function Hero() {
               href="https://www.linkedin.com/in/douglas-costa-b581ab1a1/"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-full glass hover:bg-white/5 transition"
+              className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full glass hover:bg-white/5 transition text-sm sm:text-base"
             >
               <LinkedinIcon className="h-4 w-4" /> LinkedIn
             </a>
@@ -83,7 +83,7 @@ export default function Hero() {
           </motion.div>
         </div>
 
-        <div className="lg:col-span-6 relative h-[420px] sm:h-[520px] lg:h-[560px]">
+        <div className="lg:col-span-6 relative h-[320px] sm:h-[480px] lg:h-[560px]">
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}

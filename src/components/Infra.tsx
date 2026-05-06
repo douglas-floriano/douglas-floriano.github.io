@@ -13,7 +13,7 @@ const items = [
 
 export default function Infra() {
   return (
-    <section id="infra" className="relative py-28 px-6">
+    <section id="infra" className="relative py-20 sm:py-24 lg:py-28 px-4 sm:px-6">
       <div className="mx-auto max-w-7xl">
         <SectionHeader
           eyebrow="Infraestrutura"
@@ -32,7 +32,7 @@ export default function Infra() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: '-60px' }}
                   transition={{ duration: 0.5, delay: i * 0.06 }}
-                  className="group relative glass rounded-2xl p-6 overflow-hidden hover:-translate-y-1 transition-transform"
+                  className="group relative glass glow-border rounded-2xl p-5 sm:p-6 overflow-hidden hover:-translate-y-1 transition-transform"
                 >
                   <div className="pointer-events-none absolute -top-8 -right-8 h-32 w-32 rounded-full bg-brand-violet/10 blur-2xl group-hover:bg-brand-cyan/20 transition-colors" />
                   <div className="relative flex items-start justify-between mb-4">
