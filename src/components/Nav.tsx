@@ -25,20 +25,20 @@ export default function Nav() {
         initial={{ y: -40, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[min(880px,92vw)]"
+        className="fixed top-4 left-1/2 z-50 -translate-x-1/2 w-[min(960px,calc(100vw-1rem))]"
       >
-        <div className="glass glow-border rounded-full px-4 sm:px-5 py-2.5 sm:py-3 flex items-center justify-between gap-3">
-          <a href="#top" className="flex items-center gap-2 font-display font-bold shrink-0">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-cyan via-brand-violet to-brand-pink text-ink-900 text-sm">DF</span>
-            <span className="hidden sm:inline text-white text-sm lg:text-base">Douglas Floriano</span>
+        <div className="glass glow-border rounded-full pl-3 pr-2 sm:pl-5 sm:pr-3 py-2 sm:py-2.5 flex items-center gap-2 sm:gap-4">
+          <a href="#top" className="flex items-center gap-2 font-display font-bold shrink-0 mr-auto md:mr-0">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand-cyan via-brand-violet to-brand-pink text-ink-900 text-sm shrink-0">DF</span>
+            <span className="hidden sm:inline text-white text-sm">Douglas Floriano</span>
           </a>
 
-          <ul className="hidden lg:flex items-center gap-0.5 min-w-0">
+          <ul className="hidden md:flex flex-1 items-center justify-center gap-0.5">
             {links.map((l) => (
               <li key={l.href}>
                 <a
                   href={l.href}
-                  className="px-2.5 xl:px-3 py-1.5 text-sm text-gray-300 hover:text-white rounded-full hover:bg-white/5 transition whitespace-nowrap"
+                  className="px-2.5 lg:px-3 py-1.5 text-sm text-gray-300 hover:text-white rounded-full hover:bg-white/5 transition whitespace-nowrap"
                 >
                   {l.label}
                 </a>
@@ -46,10 +46,17 @@ export default function Nav() {
             ))}
           </ul>
 
+          <a
+            href="#contato"
+            className="hidden md:inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-brand-cyan to-brand-violet text-ink-900 text-sm font-semibold shrink-0 hover:shadow-[0_0_24px_rgba(56,189,248,0.5)] transition-shadow whitespace-nowrap"
+          >
+            Conversar
+          </a>
+
           <button
             aria-label="Abrir menu"
             onClick={() => setOpen((v) => !v)}
-            className="lg:hidden inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition shrink-0"
+            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 transition shrink-0"
           >
             {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
@@ -63,7 +70,7 @@ export default function Nav() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.2 }}
-            className="fixed top-20 left-1/2 z-40 -translate-x-1/2 w-[min(420px,92vw)] lg:hidden"
+            className="fixed top-20 left-1/2 z-40 -translate-x-1/2 w-[min(420px,calc(100vw-1rem))] md:hidden"
           >
             <div className="glass glow-border rounded-2xl p-4">
               <ul className="flex flex-col gap-1">

@@ -24,9 +24,9 @@ html, body, #root {
 
 html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
-* { box-sizing: border-box; min-width: 0; }
+* { box-sizing: border-box; }
 
-img, svg, video, canvas { max-width: 100%; height: auto; }
+img, video { max-width: 100%; height: auto; display: block; }
 
 /* Respect users that prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
