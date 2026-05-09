@@ -1,125 +1,138 @@
 import { motion } from 'framer-motion'
-import { Suspense, lazy } from 'react'
-import { SectionHeader } from './Section'
 
-const TechOrb = lazy(() => import('./TechOrb'))
+type Group = { title: string; description: string; items: { name: string; note?: string; primary?: boolean }[] }
 
-type Tech = { name: string; color: string }
-
-const groups: { title: string; items: Tech[] }[] = [
+const groups: Group[] = [
   {
-    title: 'Backend',
+    title: 'Linguagens',
+    description: 'O que escrevo todo dia',
     items: [
-      { name: 'PHP 8.2', color: '#8892be' },
-      { name: 'Laravel 10', color: '#ff2d20' },
-      { name: 'Node.js', color: '#3c873a' },
-      { name: 'TypeScript', color: '#3178c6' },
-      { name: 'Express', color: '#6e6e6e' },
-      { name: 'Horizon / Queues', color: '#ff2d20' },
-      { name: 'REST APIs', color: '#22d3ee' },
+      { name: 'PHP 8.2',     note: '8 anos · Laravel' },
+      { name: 'TypeScript',  note: '6 anos · React/Node', primary: true },
+      { name: 'JavaScript',  note: 'desde sempre' },
+      { name: 'SQL',         note: 'MariaDB · MySQL · Postgres' },
+      { name: 'Bash',        note: 'CI · scripts de infra' },
     ],
   },
   {
-    title: 'Frontend',
+    title: 'Backend & API',
+    description: 'Onde mora a regra',
     items: [
-      { name: 'React 18', color: '#61dafb' },
-      { name: 'Vite', color: '#a855f7' },
-      { name: 'TypeScript', color: '#3178c6' },
-      { name: 'Tailwind', color: '#38bdf8' },
-      { name: 'PrimeReact', color: '#1ea97c' },
-      { name: 'Bootstrap', color: '#7952b3' },
-      { name: 'Framer Motion', color: '#ec4899' },
-      { name: 'Three.js / R3F', color: '#ffffff' },
+      { name: 'Laravel 10', note: 'Eloquent · Horizon · queues', primary: true },
+      { name: 'Node.js',    note: 'Express · TSX' },
+      { name: 'REST',       note: 'design + versionamento' },
+      { name: 'JWT · OAuth',note: 'auth multi-perfil' },
+      { name: 'WebSocket',  note: 'live · check-in · notif.' },
     ],
   },
   {
-    title: 'Dados',
+    title: 'Frontend & Mobile',
+    description: 'Onde mora o usuário',
     items: [
-      { name: 'MariaDB', color: '#c0765a' },
-      { name: 'MySQL', color: '#00758f' },
-      { name: 'MongoDB', color: '#47a248' },
-      { name: 'Redis', color: '#dc382d' },
-      { name: 'Eloquent ORM', color: '#ff2d20' },
+      { name: 'React 19',     note: 'Vite · CRA · Next', primary: true },
+      { name: 'React Native', note: 'Expo · iOS · Android' },
+      { name: 'Tailwind CSS', note: 'v3 e v4' },
+      { name: 'PrimeReact',   note: 'sistemas internos densos' },
+      { name: 'Framer Motion',note: 'micro-interação polida' },
     ],
   },
   {
-    title: 'Cloud & DevOps',
+    title: 'Infra & Cloud',
+    description: 'Onde o sistema vive',
     items: [
-      { name: 'AWS ECS', color: '#ff9900' },
-      { name: 'AWS S3', color: '#ff9900' },
-      { name: 'CloudFront', color: '#ff9900' },
-      { name: 'RDS', color: '#ff9900' },
-      { name: 'Docker', color: '#2496ed' },
-      { name: 'GitHub Actions', color: '#ffffff' },
-      { name: 'CI/CD', color: '#a855f7' },
-      { name: 'CodePipeline', color: '#ff9900' },
+      { name: 'AWS ECS · ECR', note: 'containers em produção', primary: true },
+      { name: 'RDS',           note: 'MariaDB · MySQL · Aurora' },
+      { name: 'CloudFront · S3', note: 'CDN + assets' },
+      { name: 'Docker',        note: 'compose · multi-stage' },
+      { name: 'Linux',         note: 'admin · shell · cron' },
     ],
   },
   {
-    title: 'Integrações',
+    title: 'DevOps & Pipeline',
+    description: 'Como o código chega na prod',
     items: [
-      { name: 'WhatsApp Web', color: '#25d366' },
-      { name: 'Puppeteer', color: '#40b5a4' },
-      { name: 'Stripe / Pagamentos', color: '#635bff' },
-      { name: 'Swagger', color: '#85ea2d' },
-      { name: 'Webhooks', color: '#22d3ee' },
+      { name: 'GitHub Actions', note: 'deploy automatizado', primary: true },
+      { name: 'Trunk-based',    note: 'main → ECS · push' },
+      { name: 'GitLab CI',      note: 'pipelines complexos' },
+      { name: 'CodePipeline',   note: 'AWS-native legacy' },
+      { name: 'Webhook deploys',note: 'fluxos custom' },
+    ],
+  },
+  {
+    title: 'Banco & dados',
+    description: 'Modelagem é design',
+    items: [
+      { name: 'MariaDB',  note: 'principal · IB System' },
+      { name: 'MySQL',    note: 'legacy + novos' },
+      { name: 'PostgreSQL', note: 'projetos pessoais' },
+      { name: 'SQLite',   note: 'embutido · prototipagem' },
+      { name: 'Redis',    note: 'cache · queues · Horizon' },
     ],
   },
 ]
 
 export default function Stack() {
   return (
-    <section id="stack" className="relative py-20 sm:py-24 lg:py-28 px-4 sm:px-6">
-      <div className="mx-auto max-w-7xl">
-        <SectionHeader
-          eyebrow="Stack"
-          title={<>Ferramental de <span className="gradient-text">um senior</span>.</>}
-          description="Combinações que já coloquei em produção — com ownership de ponta a ponta, não só prova de conceito."
-        />
+    <section id="stack" className="relative py-20 sm:py-28 bg-paper2/40">
+      <div className="mx-auto max-w-[1280px] px-6 sm:px-10">
+        <div className="h-line mb-10 sm:mb-14">
+          <span className="kicker"><span className="ornament not-italic">№ 04</span> &nbsp; Stack</span>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.92 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: '-60px' }}
-          transition={{ duration: 0.9 }}
-          className="relative mb-8 sm:mb-10 h-[340px] sm:h-[440px] lg:h-[480px] rounded-2xl sm:rounded-3xl overflow-hidden glass glow-border touch-none"
-        >
-          <Suspense fallback={<div className="w-full h-full bg-gradient-to-br from-brand-violet/10 to-brand-cyan/10 animate-pulse" />}>
-            <TechOrb />
-          </Suspense>
-          <div className="pointer-events-none absolute top-4 left-5 flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-brand-cyan animate-pulse" />
-            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-400">cluster interativo · arraste</span>
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 mb-12 sm:mb-16">
+          <div className="lg:col-span-7">
+            <h2 className="display text-[clamp(2.4rem,6vw,4.5rem)] text-ink">
+              Ferramental de um <span className="marker">sênior</span>.
+            </h2>
           </div>
-        </motion.div>
+          <p className="lg:col-span-5 text-base sm:text-lg text-ink2 leading-relaxed font-light lg:pt-3">
+            Não a lista de "tecnologias que ouvi falar". É a stack que toco diariamente — em produção, com responsabilidade real. Anos calejando cada peça, sabendo onde cada uma quebra e o que fazer no plantão.
+          </p>
+        </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-ink/15">
           {groups.map((g, idx) => (
             <motion.div
               key={g.title}
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-60px' }}
               transition={{ duration: 0.5, delay: idx * 0.05 }}
-              className="glass glow-border rounded-2xl p-5 sm:p-6"
+              className="bg-paper p-6 sm:p-8 hover:bg-paper2/70 transition-colors group"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <span className="font-mono text-xs text-brand-cyan">{String(idx + 1).padStart(2, '0')}</span>
-                <h3 className="font-display text-lg text-white">{g.title}</h3>
+              <div className="flex items-baseline justify-between mb-1">
+                <h3 className="font-serif font-bold text-xl text-ink">{g.title}</h3>
+                <span className="font-mono text-[10px] text-muted tabular">.0{idx + 1}</span>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {g.items.map((t) => (
-                  <span
-                    key={t.name}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs text-gray-200 hover:bg-white/[0.08] transition"
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full" style={{ background: t.color }} />
-                    {t.name}
-                  </span>
+              <p className="font-serif italic text-sm text-muted mb-5">{g.description}</p>
+
+              <ul className="space-y-2.5">
+                {g.items.map(i => (
+                  <li key={i.name} className="flex items-baseline gap-3 text-sm">
+                    <span className={`w-1 h-1 rounded-full mt-2 shrink-0 ${i.primary ? 'bg-accent' : 'bg-ink/40'}`} />
+                    <div className="flex-1 min-w-0">
+                      <span className={`${i.primary ? 'font-medium text-ink' : 'text-ink2'}`}>{i.name}</span>
+                      {i.note && <span className="ml-2 text-muted text-[12px] font-light">{i.note}</span>}
+                    </div>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </motion.div>
           ))}
+        </div>
+
+        {/* Marquee — also-fluent strip */}
+        <div className="mt-14 overflow-hidden border-y border-ink/15 py-5 bg-paper">
+          <div className="flex gap-12 marquee whitespace-nowrap will-change-transform">
+            {[...Array(2)].map((_, k) => (
+              <div key={k} className="flex gap-12 shrink-0">
+                {['Stripe', 'Mercado Pago', 'PIX', 'Twilio', 'WhatsApp Cloud', 'SendGrid', 'Resend', 'Inter', 'Asaas', 'Bling', 'GoogleAuth', 'Firebase', 'OneSignal', 'Sentry', 'CloudWatch', 'Cloudflare'].map(b => (
+                  <span key={b + k} className="font-serif italic text-2xl sm:text-3xl text-ink/60">{b}</span>
+                ))}
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-center font-mono text-[10px] uppercase tracking-[0.2em] text-muted">+ integrações que já encanei em produção</p>
         </div>
       </div>
     </section>

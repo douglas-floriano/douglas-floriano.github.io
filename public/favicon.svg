@@ -1,11 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#22d3ee"/>
-      <stop offset=".5" stop-color="#a855f7"/>
-      <stop offset="1" stop-color="#ec4899"/>
-    </linearGradient>
-  </defs>
-  <rect width="64" height="64" rx="14" fill="#05060a"/>
-  <text x="32" y="43" font-family="Space Grotesk, Inter, sans-serif" font-weight="700" font-size="30" text-anchor="middle" fill="url(#g)">DF</text>
+  <rect x="2" y="2" width="60" height="60" rx="8" fill="#0F0E0C"/>
+  <text x="50%" y="56%" text-anchor="middle" dominant-baseline="middle"
+        font-family="Fraunces, Times New Roman, serif" font-weight="700" font-size="34"
+        letter-spacing="-2" fill="#F2EDE3">df</text>
+  <circle cx="50" cy="50" r="3" fill="#E2410E"/>
 </svg>
