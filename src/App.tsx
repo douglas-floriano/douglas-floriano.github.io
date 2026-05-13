@@ -1,6 +1,7 @@
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Now from './components/Now'
+import Journey from './components/Journey'
 import Work from './components/Work'
 import Stack from './components/Stack'
 import Approach from './components/Approach'
@@ -14,6 +15,7 @@ export default function App() {
       <main>
         <Hero />
         <Now />
+        <Journey />
         <Work />
         <Stack />
         <Approach />

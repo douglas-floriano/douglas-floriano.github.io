@@ -566,7 +566,7 @@ export default function Work() {
     <section id="trabalho" className="relative py-20 sm:py-28">
       <div className="mx-auto max-w-[1280px] px-6 sm:px-10">
         <div className="h-line mb-10 sm:mb-14">
-          <span className="kicker"><span className="ornament not-italic">№ 03</span> &nbsp; Trabalho selecionado</span>
+          <span className="kicker"><span className="ornament not-italic">№ 04</span> &nbsp; Trabalho selecionado</span>
         </div>
 
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 mb-12 sm:mb-16">
@@ -597,7 +597,7 @@ export default function Work() {
         </div>
 
         {/* Personal */}
-        <div>
+        <div id="projetos" className="scroll-mt-24">
           <div className="flex items-baseline gap-4 mb-6">
             <h3 className="font-serif text-2xl sm:text-3xl text-ink">Produtos pessoais</h3>
             <div className="flex-1 rule" />

@@ -15,7 +15,7 @@ export default function Contact() {
       <div className="mx-auto max-w-[1280px] px-6 sm:px-10 relative">
         <div className="h-line mb-10 sm:mb-14">
           <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-paper/60">
-            <span className="ornament not-italic" style={{ color: '#A39A85' }}>№ 06</span> &nbsp; Contato
+            <span className="ornament not-italic" style={{ color: '#A39A85' }}>№ 07</span> &nbsp; Contato
           </span>
         </div>
 

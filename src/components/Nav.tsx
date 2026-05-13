@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react'
 import Logo, { Wordmark } from './Logo'
 
 const links = [
-  { href: '#now',      label: 'Hoje' },
-  { href: '#trabalho', label: 'Trabalho' },
-  { href: '#stack',    label: 'Stack' },
-  { href: '#processo', label: 'Processo' },
-  { href: '#contato',  label: 'Contato' },
+  { num: '01', href: '#top',        label: 'Início' },
+  { num: '02', href: '#now',        label: 'Hoje' },
+  { num: '03', href: '#trajetoria', label: 'Trajetória' },
+  { num: '04', href: '#trabalho',   label: 'Trabalho' },
+  { num: '04', href: '#projetos',   label: 'Projetos' },
+  { num: '05', href: '#stack',      label: 'Stack' },
+  { num: '06', href: '#processo',   label: 'Processo' },
+  { num: '07', href: '#contato',    label: 'Contato' },
 ]
 
 export default function Nav() {
@@ -32,9 +35,9 @@ export default function Nav() {
         </a>
 
         <nav className="hidden md:flex items-center gap-7">
-          {links.map((l, i) => (
+          {links.map(l => (
             <a key={l.href} href={l.href} className="group relative font-mono text-[11px] uppercase tracking-[0.18em] text-ink2 hover:text-ink transition-colors">
-              <span className="text-muted mr-1.5 tabular">0{i + 1}</span>
+              <span className="text-muted mr-1.5 tabular">{l.num}</span>
               {l.label}
               <span className="absolute left-0 -bottom-1 h-px w-0 bg-accent transition-all group-hover:w-full" />
             </a>
@@ -60,9 +63,9 @@ export default function Nav() {
       {open && (
         <div className="md:hidden border-t border-rule bg-paper">
           <div className="px-6 py-6 space-y-4">
-            {links.map((l, i) => (
+            {links.map(l => (
               <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="block font-serif text-2xl text-ink">
-                <span className="font-mono text-[11px] text-muted mr-2 tabular">0{i + 1}</span>
+                <span className="font-mono text-[11px] text-muted mr-2 tabular">{l.num}</span>
                 {l.label}
               </a>
             ))}

@@ -10,9 +10,6 @@ export default function Hero() {
             <span className="text-muted">Vol. 07 ·</span> Portfólio · 2026
           </span>
           <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-muted">Itirapuã / SP · BR</span>
-          <span className="ml-auto inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.22em] text-ink2">
-            <span className="live-dot" /> Aceitando novos projetos
-          </span>
         </div>
 
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 items-end">
@@ -68,7 +65,7 @@ export default function Hero() {
             <div className="mt-3 grid grid-cols-3 gap-2 text-center">
               <a href="https://github.com/douglas-floriano" target="_blank" rel="noreferrer" className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted hover:text-ink py-2 border border-rule rounded-full">GitHub</a>
               <a href="https://www.linkedin.com/in/douglas-costa-b581ab1a1/" target="_blank" rel="noreferrer" className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted hover:text-ink py-2 border border-rule rounded-full">LinkedIn</a>
-              <a href="#contato" className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted hover:text-ink py-2 border border-rule rounded-full">CV</a>
+              <a href="/cv-douglas-floriano-costa.pdf" download className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted hover:text-ink py-2 border border-rule rounded-full">CV</a>
             </div>
           </motion.div>
         </div>

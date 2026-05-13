@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import SkillsGlobe from './SkillsGlobe'
 
 type Group = { title: string; description: string; items: { name: string; note?: string; primary?: boolean }[] }
 
@@ -76,7 +77,7 @@ export default function Stack() {
     <section id="stack" className="relative py-20 sm:py-28 bg-paper2/40">
       <div className="mx-auto max-w-[1280px] px-6 sm:px-10">
         <div className="h-line mb-10 sm:mb-14">
-          <span className="kicker"><span className="ornament not-italic">№ 04</span> &nbsp; Stack</span>
+          <span className="kicker"><span className="ornament not-italic">№ 05</span> &nbsp; Stack</span>
         </div>
 
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 mb-12 sm:mb-16">
@@ -88,6 +89,39 @@ export default function Stack() {
           <p className="lg:col-span-5 text-base sm:text-lg text-ink2 leading-relaxed font-light lg:pt-3">
             Não a lista de "tecnologias que ouvi falar". É a stack que toco diariamente — em produção, com responsabilidade real. Anos calejando cada peça, sabendo onde cada uma quebra e o que fazer no plantão.
           </p>
+        </div>
+
+        {/* 3D Skills Globe */}
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 mb-16 sm:mb-20 items-center">
+          <div className="lg:col-span-7 order-2 lg:order-1">
+            <SkillsGlobe />
+          </div>
+          <div className="lg:col-span-5 order-1 lg:order-2">
+            <span className="kicker"><span className="ornament not-italic">№ 05.a</span> &nbsp; Minhas habilidades</span>
+            <h3 className="display text-[clamp(1.8rem,4.4vw,3rem)] text-ink mt-4">
+              Toda <em className="italic font-serif text-accent">ferramenta</em> em uma órbita só.
+            </h3>
+            <p className="mt-5 text-ink2 text-base font-light leading-relaxed">
+              Cada ícone é uma ferramenta que já entregou código em produção. Gire à vontade — clique pra fixar o nome.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a
+                href="/cv-douglas-floriano-costa.pdf"
+                download
+                className="btn-ink"
+              >
+                Baixar currículo
+                <span aria-hidden className="font-serif italic">↓</span>
+              </a>
+              <a href="#contato" className="btn-ghost">
+                Falar comigo
+              </a>
+            </div>
+            <p className="mt-3 font-mono text-[10px] uppercase tracking-[0.2em] text-muted">
+              PDF · pt-BR · atualizado 2026
+            </p>
+          </div>
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-ink/15">

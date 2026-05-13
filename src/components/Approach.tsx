@@ -28,7 +28,7 @@ export default function Approach() {
     <section id="processo" className="relative py-20 sm:py-28">
       <div className="mx-auto max-w-[1280px] px-6 sm:px-10">
         <div className="h-line mb-10 sm:mb-14">
-          <span className="kicker"><span className="ornament not-italic">№ 05</span> &nbsp; Processo &amp; princípios</span>
+          <span className="kicker"><span className="ornament not-italic">№ 06</span> &nbsp; Processo &amp; princípios</span>
         </div>
 
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-14 mb-14 sm:mb-20">
