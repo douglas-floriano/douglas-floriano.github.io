@@ -96,13 +96,13 @@ img, video, svg { max-width: 100%; height: auto; display: block; }
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 1;
+  z-index: 4;
   background: radial-gradient(
-    600px circle at var(--mx, 50%) var(--my, 30%),
-    rgba(34,197,94,0.08),
-    transparent 50%
+    420px circle at var(--mx, 50%) var(--my, 30%),
+    rgba(34,197,94,0.10),
+    transparent 55%
   );
-  transition: background 0.2s ease;
+  mix-blend-mode: screen;
 }
 
 /* === Typography === */
@@ -351,4 +351,11 @@ img, video, svg { max-width: 100%; height: auto; display: block; }
 /* Diagonal lines decor */
 .hatch {
   background-image: repeating-linear-gradient(45deg, rgba(34,197,94,0.18) 0 1px, transparent 1px 8px);
+}
+
+body.pf-dragging,
+body.pf-dragging * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  cursor: grabbing !important;
 }

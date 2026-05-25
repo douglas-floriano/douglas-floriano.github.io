@@ -25,8 +25,8 @@ const IS_TOUCH = typeof window !== 'undefined' && window.matchMedia('(hover: non
 const IS_SMALL = typeof window !== 'undefined' && window.innerWidth < 768
 const REDUCED = IS_TOUCH || IS_SMALL
 
-const PARTICLE_COUNT = REDUCED ? 35 : 130
-const LINK_DIST = REDUCED ? 0 : 150
+const PARTICLE_COUNT = REDUCED ? 35 : 90
+const LINK_DIST = REDUCED ? 0 : 110
 const CURSOR_RADIUS = 200
 const GRAB_RADIUS = 70
 const MAGNET = 0.012
@@ -77,15 +77,18 @@ export default function ParticleField() {
     const particles: Particle[] = Array.from({ length: PARTICLE_COUNT }, () => ({
       x: Math.random() * w,
       y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.28,
-      vy: (Math.random() - 0.5) * 0.28,
-      size: Math.random() * 1.6 + 0.7,
+      vx: (Math.random() - 0.5) * 0.32,
+      vy: (Math.random() - 0.5) * 0.32,
+      size: Math.random() * 1.8 + 0.9,
       phase: Math.random() * Math.PI * 2,
       pulse: 0.006 + Math.random() * 0.014,
-      baseAlpha: 0.5 + Math.random() * 0.4,
+      baseAlpha: 0.7 + Math.random() * 0.3,
     }))
 
     const mouse = { x: -9999, y: -9999, active: false, down: false, vx: 0, vy: 0, lastX: 0, lastY: 0 }
+
+    // pending cluster-handoff from another tab
+    let pendingCluster: null | { ts: number; particles: any[] } = null
 
     const onMove = (e: MouseEvent) => {
       const nx = e.clientX, ny = e.clientY
@@ -95,19 +98,91 @@ export default function ParticleField() {
       }
       mouse.lastX = nx; mouse.lastY = ny
       mouse.x = nx; mouse.y = ny; mouse.active = true
+
+      // ingest pending cluster if active and cursor just entered
+      if (pendingCluster && performance.now() - pendingCluster.ts < 700) {
+        for (const sp of pendingCluster.particles) {
+          // offset around cursor based on stored relative
+          particles.push({
+            x: mouse.x + (sp.rx ?? 0),
+            y: mouse.y + (sp.ry ?? 0),
+            vx: sp.vx, vy: sp.vy,
+            size: sp.size,
+            phase: Math.random() * Math.PI * 2,
+            pulse: 0.006 + Math.random() * 0.014,
+            baseAlpha: sp.baseAlpha,
+            grabbed: true,
+            fromPeer: sp.fromColor,
+          })
+        }
+        while (particles.length > PARTICLE_COUNT + 80) particles.shift()
+        mouse.down = true
+        document.body.classList.add('pf-dragging')
+        pendingCluster = null
+      }
     }
-    const onLeave = () => { mouse.active = false; mouse.down = false; mouse.x = -9999; mouse.y = -9999 }
+    const onLeave = () => {
+      // if dragging cluster + leaving viewport → handoff to peer whose viewport is adjacent
+      if (mouse.down && ch && peers.size) {
+        const grabbed = particles.filter(p => p.grabbed)
+        if (grabbed.length) {
+          const sx = (window.screenX || 0) + mouse.x
+          const sy = (window.screenY || 0) + mouse.y
+          let target: Peer | null = null
+          let best = Infinity
+          peers.forEach((peer) => {
+            const cx = peer.screenX + peer.w / 2
+            const cy = peer.screenY + peer.h / 2
+            const d = Math.hypot(sx - cx, sy - cy)
+            if (d < best) { best = d; target = peer }
+          })
+          if (target) {
+            const peer: Peer = target
+            ch.postMessage({
+              t: 'cluster',
+              from: myId,
+              to: peer.id,
+              particles: grabbed.map((p) => ({
+                rx: p.x - mouse.x,
+                ry: p.y - mouse.y,
+                vx: p.vx, vy: p.vy,
+                size: p.size,
+                baseAlpha: p.baseAlpha,
+                fromColor: PEER_COLORS[hash(myId) % PEER_COLORS.length],
+              })),
+            })
+            for (const p of grabbed) { p.x = -99999 }
+          }
+        }
+      }
+      mouse.active = false
+      mouse.down = false
+      document.body.classList.remove('pf-dragging')
+      mouse.x = -9999; mouse.y = -9999
+    }
 
     const onDown = (e: MouseEvent) => {
       if (e.button !== 0) return
-      // only activate particle grab with Shift modifier — avoids stealing text selection
-      if (!e.shiftKey) return
-      e.preventDefault()
-      mouse.down = true
+      const tgt = e.target as HTMLElement | null
+      if (tgt && tgt.closest('a, button, input, textarea, select, [role="button"], p, h1, h2, h3, h4, h5, h6, li, span, em, strong, code, pre, label, img')) return
+      // first pass: any particle within GRAB_RADIUS
+      let any = false
       for (const p of particles) {
         const d = Math.hypot(p.x - mouse.x, p.y - mouse.y)
-        if (d < GRAB_RADIUS) p.grabbed = true
+        if (d < GRAB_RADIUS) { p.grabbed = true; any = true }
       }
+      // fallback: grab nearest 10 particles (suck them in)
+      if (!any) {
+        const ranked = particles
+          .map((p) => ({ p, d: Math.hypot(p.x - mouse.x, p.y - mouse.y) }))
+          .sort((a, b) => a.d - b.d)
+          .slice(0, 10)
+        for (const { p } of ranked) { p.grabbed = true; any = true }
+      }
+      if (!any) return
+      mouse.down = true
+      e.preventDefault()
+      document.body.classList.add('pf-dragging')
     }
 
     const onUp = () => {
@@ -165,6 +240,7 @@ export default function ParticleField() {
           p.grabbed = false
         }
       }
+      document.body.classList.remove('pf-dragging')
     }
 
     window.addEventListener('mousemove', onMove)
@@ -191,6 +267,9 @@ export default function ParticleField() {
           })
         } else if (m.t === 'bye') {
           peers.delete(m.id)
+        } else if (m.t === 'cluster') {
+          if (m.to && m.to !== myId) return
+          pendingCluster = { ts: performance.now(), particles: m.particles }
         } else if (m.t === 'send') {
           // accept incoming particles → translate from screen to my viewport
           if (m.to && m.to !== myId) return
@@ -239,10 +318,32 @@ export default function ParticleField() {
     const onUnload = () => { try { ch?.postMessage({ t: 'bye', id: myId }) } catch {} }
     window.addEventListener('beforeunload', onUnload)
 
+    // mask rects: content blocks where particles/lines should NOT draw
+    let maskRects: { x: number; y: number; w: number; h: number }[] = []
+    let lastMaskUpdate = 0
+    const updateMaskRects = () => {
+      const els = document.querySelectorAll<HTMLElement>('section, .card, .term, footer, header')
+      const rects: { x: number; y: number; w: number; h: number }[] = []
+      els.forEach((el) => {
+        const r = el.getBoundingClientRect()
+        if (r.bottom < 0 || r.top > h || r.right < 0 || r.left > w) return
+        rects.push({ x: r.left, y: r.top, w: r.width, h: r.height })
+      })
+      maskRects = rects
+    }
+    const inMask = (x: number, y: number) => {
+      for (const r of maskRects) {
+        if (x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) return true
+      }
+      return false
+    }
+
     let raf = 0
     const tick = () => {
       const now = performance.now()
       ctx.clearRect(0, 0, w, h)
+
+      if (now - lastMaskUpdate > 250) { updateMaskRects(); lastMaskUpdate = now }
 
       broadcastCursor(now)
       peers.forEach((p, id) => { if (now - p.ts > PEER_TTL) peers.delete(id) })
@@ -309,14 +410,56 @@ export default function ParticleField() {
           }
         }
 
+        // auto-handoff at viewport edge if a peer's window is adjacent in screen-space
+        if ((p.x < -2 || p.x > w + 2 || p.y < -2 || p.y > h + 2) && peers.size && ch) {
+          const sx = p.x + (window.screenX || 0)
+          const sy = p.y + (window.screenY || 0)
+          let handed = false
+          peers.forEach((peer) => {
+            if (handed) return
+            const pad = 30
+            if (sx >= peer.screenX - pad && sx <= peer.screenX + peer.w + pad &&
+                sy >= peer.screenY - pad && sy <= peer.screenY + peer.h + pad) {
+              ch!.postMessage({
+                t: 'send', from: myId, to: peer.id,
+                particles: [{
+                  sx, sy, vx: p.vx, vy: p.vy,
+                  size: p.size, baseAlpha: p.baseAlpha,
+                }],
+              })
+              p.x = -99999  // mark for removal
+              handed = true
+            }
+          })
+          if (handed) continue
+        }
+
         if (p.x < -10) p.x = w + 10
         if (p.x > w + 10) p.x = -10
         if (p.y < -10) p.y = h + 10
         if (p.y > h + 10) p.y = -10
       }
+      // sweep handed-off particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        if (particles[i].x < -99998) particles.splice(i, 1)
+      }
+      // top up to keep count
+      while (particles.length < PARTICLE_COUNT) {
+        particles.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          vx: (Math.random() - 0.5) * 0.32,
+          vy: (Math.random() - 0.5) * 0.32,
+          size: Math.random() * 1.8 + 0.9,
+          phase: Math.random() * Math.PI * 2,
+          pulse: 0.006 + Math.random() * 0.014,
+          baseAlpha: 0.7 + Math.random() * 0.3,
+        })
+      }
 
-      // draw particles
+      // draw particles (skip those inside content masks)
       for (const p of particles) {
+        if (!p.grabbed && inMask(p.x, p.y)) continue
         const twinkle = 0.65 + Math.sin(p.phase) * 0.35
         let prox = 0
         let proxColor = p.fromPeer ?? ACCENT
@@ -346,15 +489,17 @@ export default function ParticleField() {
       }
       ctx.shadowBlur = 0
 
-      // constellation
+      // constellation (skip if midpoint over content)
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const a = particles[i], b = particles[j]
           const dx = a.x - b.x, dy = a.y - b.y
           const d = Math.sqrt(dx * dx + dy * dy)
           if (d < LINK_DIST) {
+            const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2
+            if (inMask(mx, my) || inMask(a.x, a.y) || inMask(b.x, b.y)) continue
             const t = 1 - d / LINK_DIST
-            let alpha = t * 0.22
+            let alpha = t * 0.06
             if (mouse.active) {
               const mx = (a.x + b.x) / 2 - mouse.x
               const my = (a.y + b.y) / 2 - mouse.y
@@ -388,29 +533,6 @@ export default function ParticleField() {
         ctx.arc(mouse.x, mouse.y, GRAB_RADIUS, 0, Math.PI * 2)
         ctx.stroke()
 
-        // aim line: cursor → nearest peer projection (target lock)
-        if (peers.size && remoteCursors.length) {
-          // pick closest projected peer
-          let target = remoteCursors[0]
-          let bestD = Infinity
-          for (const rc of remoteCursors) {
-            const d = Math.hypot(rc.x - mouse.x, rc.y - mouse.y)
-            if (d < bestD) { bestD = d; target = rc }
-          }
-          ctx.setLineDash([4, 6])
-          ctx.strokeStyle = `rgba(${target.color}, 0.7)`
-          ctx.lineWidth = 1.4
-          ctx.beginPath(); ctx.moveTo(mouse.x, mouse.y); ctx.lineTo(target.x, target.y); ctx.stroke()
-          ctx.setLineDash([])
-          // arrow head
-          const ang = Math.atan2(target.y - mouse.y, target.x - mouse.x)
-          ctx.fillStyle = `rgba(${target.color}, 0.85)`
-          ctx.beginPath()
-          ctx.moveTo(target.x, target.y)
-          ctx.lineTo(target.x - 10 * Math.cos(ang - 0.4), target.y - 10 * Math.sin(ang - 0.4))
-          ctx.lineTo(target.x - 10 * Math.cos(ang + 0.4), target.y - 10 * Math.sin(ang + 0.4))
-          ctx.closePath(); ctx.fill()
-        }
       }
 
       // remote cursors + bridge
