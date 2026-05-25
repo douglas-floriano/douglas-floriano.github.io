@@ -48,7 +48,7 @@ const ibProjects: IBProject[] = [
     domain: 'admin.walletlote.app.br',
     url: 'https://admin.walletlote.app.br',
     logo: '/projects/logos/lotemobile.png',
-    logoBg: 'bg-white',
+    logoBg: 'bg-bg3',
   },
   {
     num: '02',
@@ -82,7 +82,7 @@ const ibProjects: IBProject[] = [
     tech: ['Laravel', 'Next.js', 'React Native', 'Expo', 'PostgreSQL', 'AWS'],
     domain: 'IB System · interno',
     logo: '/projects/logos/hrtinvest.png',
-    logoBg: 'bg-white',
+    logoBg: 'bg-bg3',
   },
   {
     num: '04',
@@ -99,7 +99,7 @@ const ibProjects: IBProject[] = [
     tech: ['Laravel', 'React', 'MySQL', 'AWS', 'Docker', 'Webhooks'],
     domain: 'IB System · interno',
     logo: '/projects/logos/ib3capital.png',
-    logoBg: 'bg-white',
+    logoBg: 'bg-bg3',
   },
 ]
 
