@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import BootSequence from './components/BootSequence'
+import ParticleField from './components/ParticleField'
 import StatusBar from './components/StatusBar'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
@@ -25,7 +26,7 @@ export default function App() {
 
   return (
     <div className="relative bg-noise scanlines min-h-screen bg-bg text-ink overflow-x-hidden">
-      <div className="spotlight" aria-hidden />
+      <ParticleField />
       {!booted && <BootSequence onDone={() => setBooted(true)} />}
       <div className={booted ? 'opacity-100' : 'opacity-0'} style={{ transition: 'opacity 0.6s ease' }}>
         <StatusBar />
