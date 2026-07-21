@@ -211,6 +211,59 @@ const personalProjects: PersonalProject[] = [
       },
     ],
   },
+  {
+    num: '07',
+    title: 'Racha de Terça',
+    role: 'Founder · produto, design, código, deploy',
+    description:
+      'App para o futebol semanal de amigos avaliarem uns aos outros. Cada jogador entra com um token, dá notas por critério, e o sistema fecha o racha sozinho toda terça — com ranking mensal, card estilo FIFA e sorteio de times equilibrados.',
+    story:
+      'Começou como uma planilha do grupo que ninguém conseguia manter justa. Virou web app completo: notas que dividem só por quem votou, evolução por jogador, hall da fama e até card de overall compartilhável no WhatsApp. Do zero ao ar em um dia.',
+    features: [
+      'Login por token · cada um vota no próprio',
+      'Notas 0–10 por critério (linha e goleiro)',
+      'Média divide só por quem votou',
+      'Ranking mensal com pódio · reset automático',
+      'Card FIFA com overall + foto de perfil',
+      'Sorteio de times equilibrados (admin)',
+      'Fecha sozinho terça 9h · sem cron',
+    ],
+    tech: ['Next.js 14', 'React 18', 'TypeScript', 'Tailwind', 'Drizzle ORM', 'Neon Postgres', 'Vercel OG', 'Vercel'],
+    status: 'no ar · em produção',
+    logo: '/projects/logos/racha.svg',
+    logoBg: 'bg-bg3',
+    groups: [
+      {
+        label: 'Jogador',
+        perfil: 'jogador',
+        shots: [
+          { src: '/projects/racha-inicio.png',    caption: 'Início · status da rodada, último pódio e resumo do mês', mobile: true },
+          { src: '/projects/racha-votar.png',     caption: 'Votação · sliders 0–10 por critério, autosave, sem autoavaliação', mobile: true },
+          { src: '/projects/racha-aovivo.png',    caption: 'Ao vivo · média parcial em tempo real, quem já votou', mobile: true },
+          { src: '/projects/racha-resultado.png', caption: 'Racha fechado · pódio, médias por critério e votos individuais', mobile: true },
+          { src: '/projects/racha-ranking.png',   caption: 'Ranking do mês · pódio e tabela por rodada, zera todo mês', mobile: true },
+        ],
+      },
+      {
+        label: 'Perfil & Card',
+        perfil: 'perfil',
+        shots: [
+          { src: '/projects/racha-card.png',     caption: 'Card estilo FIFA · overall + atributos + foto, compartilhável', mobile: true },
+          { src: '/projects/racha-evolucao.png', caption: 'Evolução · gráfico de nota por racha e média por critério', mobile: true },
+          { src: '/projects/racha-x1.png',       caption: 'X1 · comparador de dois jogadores por período', mobile: true },
+          { src: '/projects/racha-temporada.png',caption: 'Hall da fama · recordes e prêmios de cada mês', mobile: true },
+        ],
+      },
+      {
+        label: 'Admin',
+        perfil: 'admin',
+        shots: [
+          { src: '/projects/racha-times.png', caption: 'Sorteio de times equilibrados pelas médias · goleiro separado', mobile: true },
+          { src: '/projects/racha-admin.png', caption: 'Admin · jogadores, tokens, convites e log de votos', mobile: true },
+        ],
+      },
+    ],
+  },
 ]
 
 function Stat({ n, l, tone = 'text-accent' }: { n: string; l: string; tone?: string }) {

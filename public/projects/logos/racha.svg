@@ -1,0 +1,10 @@
+<svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="96" height="96" rx="20" fill="#0a1410"/>
+  <circle cx="48" cy="48" r="30" fill="none" stroke="#ffb020" stroke-width="3"/>
+  <path d="M48 26 L58 33 L54 45 L42 45 L38 33 Z" fill="#ffb020"/>
+  <path d="M48 26 L58 33 L54 45 L42 45 L38 33 Z" fill="#ffb020"/>
+  <path d="M30 40 L38 33 L42 45 L36 55 L26 52 Z" fill="#f2efe6" opacity="0.9"/>
+  <path d="M66 40 L58 33 L54 45 L60 55 L70 52 Z" fill="#f2efe6" opacity="0.9"/>
+  <path d="M40 62 L36 55 L42 45 L54 45 L60 55 L56 62 Z" fill="#ffb020" opacity="0.85"/>
+  <text x="48" y="86" font-family="Arial Black, sans-serif" font-weight="900" font-size="13" fill="#ffb020" text-anchor="middle" letter-spacing="1">RACHA</text>
+</svg>
