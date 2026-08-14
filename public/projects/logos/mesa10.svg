@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 120" role="img" aria-label="Mesa10">
+  <defs>
+    <linearGradient id="m10g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F5A524"/>
+      <stop offset="1" stop-color="#F97316"/>
+    </linearGradient>
+  </defs>
+  <rect width="240" height="120" rx="24" fill="#0B0D10"/>
+  <text x="120" y="74" text-anchor="middle" font-family="Axiforma, 'Segoe UI', sans-serif" font-weight="800" font-size="44" letter-spacing="-1">
+    <tspan fill="#F4F5F7">Mesa</tspan><tspan fill="url(#m10g)">10</tspan>
+  </text>
+  <rect x="78" y="86" width="84" height="5" rx="2.5" fill="url(#m10g)"/>
+</svg>
