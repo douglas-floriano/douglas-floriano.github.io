@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="MandaPedir">
+  <defs>
+    <linearGradient id="mp-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#10B981"/>
+      <stop offset="1" stop-color="#14B8A6"/>
+    </linearGradient>
+  </defs>
+  <!-- Sem fundo proprio: o simbolo tem que funcionar em pagina clara ou escura.
+       A alca e desenhada POR CIMA, na cor da marca — vazada no fundo ela
+       desaparecia em telas escuras. -->
+  <g transform="rotate(-8 52 54)">
+    <path d="M30 44 h44 l5 34 a7 7 0 0 1 -7 8 H32 a7 7 0 0 1 -7 -8 z" fill="url(#mp-grad)"/>
+    <path d="M41 44 v-7 a11 11 0 0 1 22 0 v7" fill="none" stroke="url(#mp-grad)"
+          stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <path d="M8 46 h14 M4 60 h12 M10 73 h10" stroke="#10B981" stroke-width="5"
+        stroke-linecap="round" opacity="0.5"/>
+</svg>
