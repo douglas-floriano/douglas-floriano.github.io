@@ -1,136 +1,52 @@
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
+import { Check, Copy, Download, MessageCircle, Mail } from 'lucide-react'
 
-const SCRIPT = [
-  { in: 'whoami', out: 'douglas-floriano-costa · senior fullstack · pt-BR' },
-  { in: 'cat availability.json', out: '{ "next_slot": "Q3 2026", "type": ["projeto pontual","retainer","squad lead"], "remote": true }' },
-  { in: 'curl -X POST /contact', out: '→ douglas198.floriano@hotmail.com · response < 24h' },
-  { in: 'tail location.log',     out: 'Itirapuã / SP · BR · America/Sao_Paulo (UTC-3)' },
-]
+const Github = ({ size = 17 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.26 5.68.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/></svg>
+)
+const Linkedin = ({ size = 17 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"/></svg>
+)
 
-function useTypewriter(lines: typeof SCRIPT, active: boolean) {
-  const [shown, setShown] = useState<{ in: string; out: string }[]>([])
-  const [typing, setTyping] = useState('')
-  const idx = useRef(0)
-  const sub = useRef(0)
-  const phase = useRef<'in' | 'pause' | 'out' | 'gap'>('in')
-
-  useEffect(() => {
-    if (!active) return
-    let raf: number
-    const tick = () => {
-      const cur = lines[idx.current]
-      if (!cur) return
-      if (phase.current === 'in') {
-        if (sub.current < cur.in.length) {
-          sub.current++
-          setTyping(cur.in.slice(0, sub.current))
-          raf = window.setTimeout(tick, 45 + Math.random() * 50) as unknown as number
-        } else {
-          phase.current = 'pause'
-          raf = window.setTimeout(tick, 350) as unknown as number
-        }
-      } else if (phase.current === 'pause') {
-        phase.current = 'out'
-        raf = window.setTimeout(tick, 250) as unknown as number
-      } else if (phase.current === 'out') {
-        setShown((s) => [...s, cur])
-        setTyping('')
-        sub.current = 0
-        phase.current = 'gap'
-        raf = window.setTimeout(tick, 700) as unknown as number
-      } else {
-        idx.current++
-        phase.current = 'in'
-        if (idx.current < lines.length) raf = window.setTimeout(tick, 200) as unknown as number
-      }
-    }
-    raf = window.setTimeout(tick, 400) as unknown as number
-    return () => window.clearTimeout(raf)
-  }, [lines, active])
-
-  return { shown, typing, done: shown.length >= lines.length }
-}
+const EMAIL = 'douglas198.floriano@hotmail.com'
 
 export default function Contact() {
-  const ref = useRef<HTMLDivElement | null>(null)
-  const [active, setActive] = useState(false)
-
-  useEffect(() => {
-    if (!ref.current) return
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setActive(true) }, { threshold: 0.3 })
-    obs.observe(ref.current)
-    return () => obs.disconnect()
-  }, [])
-
-  const { shown, typing, done } = useTypewriter(SCRIPT, active)
+  const [copied, setCopied] = useState(false)
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(EMAIL)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2200)
+    } catch {
+      window.location.href = `mailto:${EMAIL}`
+    }
+  }
 
   return (
-    <section id="contact" className="relative py-24 sm:py-32 border-t border-line">
-      <div className="mx-auto max-w-[1320px] px-4 sm:px-8 lg:px-16">
-        <div className="section-head">
-          <span className="kicker">/ 06</span>
-          <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">contact · open session</h2>
-        </div>
+    <section id="contato" data-field="torus" className="relative min-h-[100svh] flex items-center py-28">
+      <div className="page">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="kicker">Contato</p>
+          <h2 className="mt-5 h-mega text-[clamp(3rem,9vw,7.5rem)]">Tem um sistema para criar ou para ficar mais inteligente?</h2>
+          <p className="mt-8 text-soft text-lg max-w-[52ch] mx-auto">
+            Atendo projetos sob medida, consultoria em IA aplicada e posições de liderança técnica.
+            Você fala direto comigo e recebe resposta em até um dia útil.
+          </p>
 
-        <div className="grid lg:grid-cols-12 gap-10 items-start">
-          <div className="lg:col-span-6">
-            <h3 className="display text-[clamp(2.4rem,7vw,5.5rem)] text-ink">
-              vamos construir<br/>algo que <em>aguenta</em>.
-            </h3>
-            <p className="mt-8 text-base sm:text-lg text-ink2 leading-relaxed max-w-md">
-              Projeto pontual, retainer ou tech lead de squad. Sem agência, sem intermediário — você fala direto com quem vai escrever a primeira migration e o último deploy.
-            </p>
-
-            <div className="mt-10 flex flex-wrap gap-3">
-              <a href="mailto:douglas198.floriano@hotmail.com" className="btn-primary">
-                $ mail → douglas
-              </a>
-              <a href="https://wa.me/5516994527410" target="_blank" rel="noreferrer" className="btn-ghost">whatsapp</a>
-            </div>
-
-            <div className="mt-10 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-md">
-              {[
-                ['github',  'https://github.com/douglas-floriano'],
-                ['linkedin','https://www.linkedin.com/in/douglas-costa-b581ab1a1/'],
-                ['cv',      '/cv-douglas-floriano-costa.pdf'],
-                ['email',   'mailto:douglas198.floriano@hotmail.com'],
-              ].map(([k, h]) => (
-                <a key={k} href={h} className="text-center py-2 border border-line rounded text-[10px] font-mono uppercase tracking-[0.22em] text-muted hover:text-accent hover:border-accent transition-colors">{k}</a>
-              ))}
-            </div>
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <a href={`mailto:${EMAIL}`} className="btn btn-main"><Mail size={17} /> Enviar e-mail</a>
+            <a href="https://wa.me/5516991816628" target="_blank" rel="noreferrer" className="btn btn-line"><MessageCircle size={17} /> Chamar no WhatsApp</a>
           </div>
 
-          <div ref={ref} className="lg:col-span-6">
-            <div className="term shadow-2xl shadow-accent/10">
-              <div className="term-header">
-                <span className="term-dot bg-hot" />
-                <span className="term-dot bg-warn" />
-                <span className="term-dot bg-accent" />
-                <span className="ml-2 text-muted text-[10px] uppercase tracking-[0.18em]">douglas@floriano.os ~ %</span>
-              </div>
-              <div className="term-body min-h-[280px] text-[13px] leading-loose">
-                {shown.map((l, i) => (
-                  <div key={i} className="mb-2">
-                    <div><span className="text-accent">$</span> <span className="text-ink2">{l.in}</span></div>
-                    <div className="text-muted pl-3 break-all">{l.out}</div>
-                  </div>
-                ))}
-                {!done && (
-                  <div>
-                    <span className="text-accent">$</span> <span className="text-ink2">{typing}</span><span className="caret" />
-                  </div>
-                )}
-                {done && (
-                  <div>
-                    <span className="text-accent">$</span> <span className="caret" />
-                  </div>
-                )}
-              </div>
-            </div>
+          <button onClick={copy} className="mt-8 inline-flex items-center gap-2 text-[15px] text-muted hover:text-text transition-colors">
+            {copied ? <Check size={15} className="text-mint" /> : <Copy size={15} />}
+            {copied ? 'E-mail copiado' : EMAIL}
+          </button>
 
-            <div className="mt-3 font-mono text-[10px] uppercase tracking-[0.22em] text-muted">
-              session: read-only · output simulado · resposta real em &lt; 24h
-            </div>
+          <div className="mt-14 flex flex-wrap justify-center gap-x-8 gap-y-3 text-[15px]">
+            <a href="https://github.com/douglas-floriano" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-soft hover:text-signal"><Github size={17} /> GitHub</a>
+            <a href="https://www.linkedin.com/in/douglas-costa-b581ab1a1/" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-soft hover:text-signal"><Linkedin size={17} /> LinkedIn</a>
+            <a href="/cv-douglas-floriano-costa.pdf" download className="inline-flex items-center gap-2 text-soft hover:text-signal"><Download size={17} /> Currículo em PDF</a>
           </div>
         </div>
       </div>

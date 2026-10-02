@@ -1,146 +1,140 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
+import { ArrowDown, Download } from 'lucide-react'
+import { scrollToId } from '../lib/smooth'
 
-const ASCII = `       ░█▀▄░█▀█░█░█░█▀▀░█░░░█▀█░█▀▀
-       ░█░█░█░█░█░█░█░█░█░░░█▀█░▀▀█
-       ░▀▀░░▀▀▀░▀▀▀░▀▀▀░▀▀▀░▀░▀░▀▀▀
-                ┌──────────────┐
-                │  fullstack   │
-                │  senior · BR │
-                └──────────────┘`
+type Step = { tag: string; text: string; tone?: 'spark' | 'mint' | 'signal' }
 
-const CHARS = '!<>-_\\/[]{}—=+*^?#________'
+// Um pedido do começo ao fim, no formato que o zap-tarefas registra. Exemplo montado a partir do fluxo real.
+const STORY: Step[] = [
+  { tag: 'WhatsApp', text: 'Cliente escreve: "as baixas de ontem não aparecem no relatório"' },
+  { tag: 'Triagem', text: 'Correção no Lotemobile, cliente identificado, prioridade alta', tone: 'signal' },
+  { tag: 'Contexto', text: 'Logs da AWS e esquema do banco desse cliente carregados' },
+  { tag: 'Agente', text: 'Causa encontrada e corrigida numa branch isolada' },
+  { tag: 'Testes', text: 'Todos os testes passando', tone: 'mint' },
+  { tag: 'Revisão', text: 'Esperando a minha aprovação para subir', tone: 'spark' },
+  { tag: 'Entrega', text: 'No ar e cliente avisado só depois do deploy', tone: 'mint' },
+]
 
-function useScramble(target: string, start: boolean) {
-  const [out, setOut] = useState('')
+function AgentConsole() {
+  const [reduce] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+  const [count, setCount] = useState(() => (reduce ? STORY.length : 1))
+
   useEffect(() => {
-    if (!start) return
-    let frame = 0
-    const total = target.length
-    let raf: number
-    const tick = () => {
-      let s = ''
-      for (let i = 0; i < total; i++) {
-        const reveal = frame / 2.2 > i
-        s += reveal ? target[i] : CHARS[Math.floor(Math.random() * CHARS.length)]
-      }
-      setOut(s)
-      frame++
-      if (frame / 2.2 < total + 2) raf = requestAnimationFrame(tick)
-      else setOut(target)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [target, start])
-  return out
-}
+    if (reduce) return
+    // mostra um passo por vez; no fim, segura a história completa e recomeça
+    const delay = count >= STORY.length ? 5200 : 1700
+    const id = window.setTimeout(() => setCount((c) => (c >= STORY.length ? 1 : c + 1)), delay)
+    return () => window.clearTimeout(id)
+  }, [count, reduce])
 
-export default function Hero() {
-  const [phase, setPhase] = useState(0)
-  useEffect(() => {
-    const t1 = setTimeout(() => setPhase(1), 250)
-    const t2 = setTimeout(() => setPhase(2), 900)
-    return () => { clearTimeout(t1); clearTimeout(t2) }
-  }, [])
-
-  const name = useScramble('DOUGLAS FLORIANO', phase >= 1)
-  const role = useScramble('senior fullstack · arquiteto de sistemas em produção', phase >= 2)
+  const tone = (t?: Step['tone']) =>
+    t === 'spark' ? 'text-spark' : t === 'mint' ? 'text-mint' : t === 'signal' ? 'text-signal' : 'text-soft'
 
   return (
-    <section id="hero" className="relative pt-28 sm:pt-32 pb-24 sm:pb-32 bg-grid">
-      <div className="mx-auto max-w-[1320px] px-4 sm:px-8 lg:px-16">
-
-        {/* meta line */}
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mb-10 font-mono text-[10.5px] uppercase tracking-[0.22em] text-muted">
-          <span className="glow-pill"><span className="live-dot" /> aceitando projetos · q3·2026</span>
-          <span className="hidden sm:inline">vol.07 · portfólio · 2026</span>
-          <span className="hidden md:inline">Itirapuã / SP · BR</span>
-        </div>
-
-        <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-end">
-          {/* Left: name + headline */}
-          <div className="lg:col-span-8">
-            <p className="kicker mb-4">$ whoami</p>
-            <h1 className="display text-[clamp(2.6rem,9.5vw,8rem)] text-ink">
-              <span className="block">{name}</span>
-              <span className="block mt-2 text-ink2 font-display font-light text-[0.42em] tracking-[-0.01em] leading-[1.2]">
-                {role}
-              </span>
-            </h1>
-            <div className="mt-4 h-px w-24 bg-accent" />
-
-            <div className="mt-12 grid sm:grid-cols-12 gap-6 max-w-3xl">
-              <p className="sm:col-span-7 text-base sm:text-lg text-ink2 leading-relaxed">
-                Quase uma década construindo plataformas que <em className="font-serif text-accent italic">rodam em produção</em> — não protótipo, não tutorial, não toy project. Banco de dados ao pixel, AWS ao client-side.
-              </p>
-              <p className="sm:col-span-5 text-sm text-muted leading-relaxed sm:pl-6 sm:border-l sm:border-line">
-                Loteadoras, fintechs, eventos, academias. Laravel · React · React Native · AWS ECS. Sistemas usados todo dia, sem desculpa.
-              </p>
-            </div>
-
-            <div className="mt-10 flex flex-wrap items-center gap-3">
-              <a href="#work" className="btn-primary">
-                <span>./trabalho_selecionado</span>
-                <span aria-hidden>→</span>
-              </a>
-              <a href="mailto:douglas198.floriano@hotmail.com" className="btn-ghost">
-                <span>cat email.txt</span>
-              </a>
-              <a href="/cv-douglas-floriano-costa.pdf" download className="btn-ghost">
-                <span>./cv.pdf</span>
-              </a>
-            </div>
-          </div>
-
-          {/* Right: ascii + identity card */}
-          <div className="lg:col-span-4 flex flex-col gap-6">
-            <pre className="ascii hidden md:block">{ASCII}</pre>
-
-            <div className="term">
-              <div className="term-header">
-                <span className="term-dot bg-hot" />
-                <span className="term-dot bg-warn" />
-                <span className="term-dot bg-accent" />
-                <span className="ml-2 text-muted text-[10px] uppercase tracking-[0.18em]">~/identity.json</span>
-              </div>
-              <div className="term-body text-[12px] leading-relaxed">
-                <div><span className="text-muted">"role":</span> <span className="text-accent">"senior fullstack"</span>,</div>
-                <div><span className="text-muted">"years":</span> <span className="text-info">9.4</span>,</div>
-                <div><span className="text-muted">"stack":</span> <span className="text-accent">["laravel", "react", "aws"]</span>,</div>
-                <div><span className="text-muted">"shipped":</span> <span className="text-info">"10+ saas"</span>,</div>
-                <div><span className="text-muted">"timezone":</span> <span className="text-accent">"America/Sao_Paulo"</span>,</div>
-                <div><span className="text-muted">"available":</span> <span className="text-accent">true</span></div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2">
-              {[
-                ['gh',  'github.com/douglas-floriano',          'https://github.com/douglas-floriano'],
-                ['in',  'linkedin.com/in/douglas-costa',        'https://www.linkedin.com/in/douglas-costa-b581ab1a1/'],
-                ['cv',  'cv-douglas-floriano-costa.pdf',        '/cv-douglas-floriano-costa.pdf'],
-              ].map(([k, _, href]) => (
-                <a key={k} href={href} target={k === 'cv' ? undefined : '_blank'} rel="noreferrer" className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted hover:text-accent text-center py-2 border border-line rounded hover:border-accent transition-colors">
-                  {k}
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Stats strip */}
-        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-6 border-y border-line py-8">
-          {[
-            ['9.4', 'anos em produção'],
-            ['10+', 'plataformas shipped'],
-            ['4',   'sistemas IB System'],
-            ['99.97%','uptime médio'],
-          ].map(([n, l]) => (
-            <div key={l}>
-              <div className="metric-big text-ink tabular">{n}</div>
-              <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted mt-2">{l}</div>
-            </div>
-          ))}
-        </div>
+    <div className="glass rounded-2xl border border-line/80 overflow-hidden shadow-[0_30px_80px_-30px_rgba(0,0,0,.8)]">
+      <div className="flex items-center justify-between gap-4 px-5 py-3.5 border-b border-line/70">
+        <span className="text-[14px] text-text font-medium">Um pedido, do WhatsApp ao deploy</span>
+        <span className="text-[13px] text-muted tnum shrink-0">passo {count} de {STORY.length}</span>
       </div>
+      <ol className="px-5 py-4 flex flex-col gap-2.5 min-h-[318px]">
+        {STORY.slice(0, count).map((l, i) => (
+          <motion.li
+            key={`${l.tag}-${i}`}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+            className="grid grid-cols-[78px_1fr] gap-3 items-baseline"
+          >
+            <span className="font-mono text-[12px] text-muted">{l.tag}</span>
+            <span className={`text-[14.5px] leading-snug ${tone(l.tone)}`}>{l.text}</span>
+          </motion.li>
+        ))}
+      </ol>
+      <p className="px-5 py-3 border-t border-line/70 text-[12.5px] text-muted">Exemplo do fluxo real do zap-tarefas, explicado mais abaixo.</p>
+    </div>
+  )
+}
+
+const NAME = ['Douglas', 'Floriano']
+
+export default function Hero() {
+  const ref = useRef<HTMLElement | null>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] })
+  const y = useTransform(scrollYProgress, [0, 1], [0, -120])
+  const fade = useTransform(scrollYProgress, [0, 0.7], [1, 0])
+
+  return (
+    <section ref={ref} id="inicio" data-field="sphere" className="relative min-h-[100svh] flex flex-col justify-center pt-28 pb-16">
+      <motion.div style={{ y, opacity: fade }} className="page relative">
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.6 }}
+          className="inline-flex items-center rounded-full border border-line bg-deep/60 px-4 py-1.5 text-[14px] text-soft"
+        >
+          Aberto a novos projetos e parcerias
+        </motion.p>
+
+        <h1 className="mt-6 lg:mt-8 h-mega text-[clamp(3.6rem,min(13vw,15.5vh),11rem)]">
+          {NAME.map((word, wi) => (
+            <span key={word} className="block overflow-hidden pb-[0.06em]">
+              <motion.span
+                className={`block ${wi === 1 ? 'text-soft' : ''}`}
+                initial={{ y: '105%' }}
+                animate={{ y: 0 }}
+                transition={{ delay: 0.25 + wi * 0.12, duration: 0.9, ease: [0.2, 0.8, 0.2, 1] }}
+              >
+                {word}
+              </motion.span>
+            </span>
+          ))}
+        </h1>
+
+        <div className="mt-8 lg:mt-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-end">
+          <motion.div
+            className="lg:col-span-6 min-w-0"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.75, duration: 0.7 }}
+          >
+            <p className="font-display text-[clamp(1.35rem,2.4vw,1.9rem)] leading-snug font-medium text-text max-w-[30ch]">
+              Engenheiro de software e especialista em IA aplicada a produtos reais.
+            </p>
+            <p className="mt-5 text-soft max-w-[54ch]">
+              Há mais de oito anos construo sistemas que pessoas usam todos os dias: loteamentos,
+              ingressos, investimentos, restaurantes e academias. Hoje coloco agentes de IA dentro
+              desses sistemas para atender clientes, corrigir código e tomar decisões com dados,
+              sempre com uma pessoa aprovando o que importa.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <button onClick={() => scrollToId('projetos')} className="btn btn-main">
+                Ver projetos <ArrowDown size={16} />
+              </button>
+              <a href="/cv-douglas-floriano-costa.pdf" download className="btn btn-line">
+                <Download size={16} /> Baixar currículo
+              </a>
+            </div>
+          </motion.div>
+
+          <motion.div
+            className="lg:col-span-5 lg:col-start-8 min-w-0"
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0, duration: 0.8 }}
+          >
+            <AgentConsole />
+          </motion.div>
+        </div>
+      </motion.div>
+
+      <motion.div
+        style={{ opacity: fade }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 text-[13px] text-muted"
+      >
+        Role para explorar
+        <span className="w-px h-10 bg-gradient-to-b from-signal to-transparent" />
+      </motion.div>
     </section>
   )
 }

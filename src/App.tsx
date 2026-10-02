@@ -1,48 +1,41 @@
-import { useEffect, useState } from 'react'
-import BootSequence from './components/BootSequence'
-import ParticleField from './components/ParticleField'
-import StatusBar from './components/StatusBar'
+import { useEffect } from 'react'
+import NeuralField from './components/NeuralField'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
-import SystemPulse from './components/SystemPulse'
+import Statement from './components/Statement'
+import AISection from './components/AISection'
+import Pipeline from './components/Pipeline'
+import Projects from './components/Projects'
+import Process from './components/Process'
+import Stack from './components/Stack'
 import Journey from './components/Journey'
-import Work from './components/Work'
-import StackOrbit from './components/StackOrbit'
-import Manifesto from './components/Manifesto'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import { startSmoothScroll } from './lib/smooth'
 
 export default function App() {
-  const [booted, setBooted] = useState(false)
-
   useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      document.documentElement.style.setProperty('--mx', `${e.clientX}px`)
-      document.documentElement.style.setProperty('--my', `${e.clientY}px`)
-    }
-    window.addEventListener('mousemove', handler)
-    return () => window.removeEventListener('mousemove', handler)
+    const lenis = startSmoothScroll()
+    return () => lenis?.destroy()
   }, [])
 
   return (
-    <div className="relative bg-noise scanlines min-h-screen bg-bg text-ink overflow-x-hidden">
-      <div className="spotlight" aria-hidden />
-      <ParticleField />
-      {!booted && <BootSequence onDone={() => setBooted(true)} />}
-      <div className={booted ? 'opacity-100' : 'opacity-0'} style={{ transition: 'opacity 0.6s ease' }}>
-        <StatusBar />
-        <Nav />
-        <main className="relative">
-          <Hero />
-          <SystemPulse />
-          <Journey />
-          <Work />
-          <StackOrbit />
-          <Manifesto />
-          <Contact />
-        </main>
-        <Footer />
-      </div>
-    </div>
+    <>
+      <NeuralField />
+      <div aria-hidden className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_top,rgba(124,156,255,0.10),transparent_60%)]" />
+      <Nav />
+      <main className="relative z-10">
+        <Hero />
+        <Statement />
+        <AISection />
+        <Pipeline />
+        <Projects />
+        <Process />
+        <Stack />
+        <Journey />
+        <Contact />
+      </main>
+      <div className="relative z-10"><Footer /></div>
+    </>
   )
 }

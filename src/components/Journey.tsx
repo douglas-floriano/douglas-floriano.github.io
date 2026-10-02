@@ -1,120 +1,73 @@
-type Entry = {
-  range: string
-  kind: 'work' | 'edu' | 'product'
-  role: string
-  org: string
-  description: string
-  stack?: string[]
-}
+import { useRef } from 'react'
+import { motion, useScroll, useTransform } from 'framer-motion'
 
-const ENTRIES: Entry[] = [
+const ENTRIES = [
   {
-    range: '2022 → now',
-    kind: 'work',
-    role: 'Desenvolvedor Sênior Fullstack',
+    when: '2025 até hoje',
+    title: 'IA aplicada dentro dos produtos',
+    org: 'IB System e projetos próprios',
+    body: 'Levei agentes para o centro do trabalho: agentes especialistas no LoteIA, um servidor MCP que abre o Lotemobile para assistentes de IA, um sistema que transforma pedidos do WhatsApp em correções revisadas e uma central onde o Claude de cada dev abre pedidos para os outros.',
+  },
+  {
+    when: '2022 até hoje',
+    title: 'Desenvolvedor sênior fullstack',
     org: 'IB System',
-    description:
-      'Mantenho 4 SaaS em produção (loteamento, ingresso, investimento, capital). Backend Laravel + filas Horizon, frontend React/React Native, infra AWS ECS/RDS/CloudFront. Da modelagem do banco ao deploy.',
-    stack: ['Laravel 10', 'React 19', 'AWS ECS', 'MariaDB', 'GH Actions'],
+    body: 'Sustento e evoluo os produtos da empresa: Lotemobile, IB Ticket, HRT Invest, Token, IB3 Capital e IB Core. Banco, API, frontend, apps, infraestrutura na AWS e deploy automatizado. Também cuido das integrações de pagamento e de WhatsApp.',
   },
   {
-    range: '2020 — 2022',
-    kind: 'work',
-    role: 'Desenvolvedor Fullstack',
-    org: 'Projetos clientes · freelance',
-    description:
-      'Plataformas sob medida pra academias, eventos e e-commerces. Primeiros contatos com infra real — sair do "roda no meu PC" e botar coisa em pé na nuvem.',
-    stack: ['PHP 8', 'Laravel', 'React', 'MySQL', 'Docker'],
+    when: '2020 a 2022',
+    title: 'Desenvolvedor fullstack',
+    org: 'Projetos sob medida',
+    body: 'Plataformas para academias, eventos e comércio. Foi quando saí do "funciona na minha máquina" e passei a cuidar de servidor, banco em nuvem e cliente ligando no sábado.',
   },
   {
-    range: '2018 — 2020',
-    kind: 'work',
-    role: 'Desenvolvedor Júnior',
-    org: 'Primeiras experiências em produção',
-    description:
-      'Começo de carreira escrevendo PHP, jQuery e SQL no dia-a-dia. Aprendi que código que ninguém usa não conta — só vale o que entra em produção e o cliente abre amanhã de manhã.',
-    stack: ['PHP', 'jQuery', 'MySQL', 'Bootstrap'],
+    when: '2018 a 2020',
+    title: 'Primeiros sistemas em produção',
+    org: 'Início de carreira',
+    body: 'PHP, jQuery e SQL no dia a dia. Aprendi cedo que o código só conta quando alguém usa na manhã seguinte.',
   },
   {
-    range: '2017 — 2019',
-    kind: 'edu',
-    role: 'Formação em Desenvolvimento de Sistemas',
-    org: 'Curso técnico · base sólida',
-    description:
-      'Fundamentos de lógica, banco de dados, redes e POO. Onde a curiosidade virou ofício.',
-  },
-  {
-    range: 'desde sempre',
-    kind: 'product',
-    role: 'Produtos pessoais',
-    org: 'Madrugadas e fins de semana',
-    description:
-      'Duas iniciativas próprias rodando em paralelo com o trabalho — porque construir produto é diferente de manter projeto, e ambos ensinam.',
-    stack: ['Next.js', 'Expo', 'Postgres', 'Stripe'],
+    when: '2017 a 2019',
+    title: 'Formação em desenvolvimento de sistemas',
+    org: 'Curso técnico',
+    body: 'Lógica, banco de dados, redes e orientação a objetos. Onde a curiosidade virou profissão.',
   },
 ]
 
-const KIND_LABEL: Record<Entry['kind'], string> = {
-  work:    'trabalho',
-  edu:     'formação',
-  product: 'produto',
-}
-
-const KIND_TONE: Record<Entry['kind'], string> = {
-  work:    'text-accent border-accent/50',
-  edu:     'text-info border-info/50',
-  product: 'text-warn border-warn/50',
-}
-
 export default function Journey() {
+  const ref = useRef<HTMLOListElement | null>(null)
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start 70%', 'end 60%'] })
+  const h = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
+
   return (
-    <section id="journey" className="relative py-24 sm:py-32 border-t border-line">
-      <div className="mx-auto max-w-[1320px] px-4 sm:px-8 lg:px-16">
-        <div className="section-head">
-          <span className="kicker">/ 02</span>
-          <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">journey · git log --reverse</h2>
+    <section id="trajetoria" data-field="cloud" className="relative py-28">
+      <div className="page">
+        <div className="max-w-3xl">
+          <p className="kicker">Trajetória</p>
+          <h2 className="mt-4 h-sec text-[clamp(2.4rem,5vw,4.2rem)]">Oito anos colocando sistemas no ar.</h2>
         </div>
 
-        <div className="grid lg:grid-cols-12 gap-10 mb-14">
-          <div className="lg:col-span-7">
-            <h3 className="display text-[clamp(2rem,5vw,3.8rem)] text-ink">
-              minha <em>trajetória</em> até aqui.
-            </h3>
+        <ol ref={ref} className="relative mt-16 ml-2 sm:ml-0">
+          <div className="absolute left-[7px] sm:left-[199px] top-2 bottom-2 w-px bg-line" aria-hidden>
+            <motion.div style={{ height: h }} className="w-px bg-gradient-to-b from-spark to-signal" />
           </div>
-          <p className="lg:col-span-5 text-base sm:text-lg text-ink2 leading-relaxed lg:pt-3">
-            Não foi atalho. Foi PHP no terminal de madrugada, banco modelado no caderno, deploy FTP, primeiro <em className="font-serif italic text-accent">git push</em> que assustou. Cada degrau virou cicatriz útil — e a stack de hoje carrega tudo isso.
-          </p>
-        </div>
-
-        <ol className="relative border-l border-line ml-3 sm:ml-6">
           {ENTRIES.map((e, i) => (
-            <li key={e.range + e.role} className="relative pl-8 sm:pl-12 pb-12 sm:pb-14 last:pb-0">
-              <span className="absolute -left-[7px] top-2 w-3 h-3 rounded-full bg-bg border-2 border-accent flex items-center justify-center">
-                {i === 0 && <span className="block w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />}
-              </span>
-
-              <div className="grid sm:grid-cols-12 gap-4 sm:gap-8">
-                <div className="sm:col-span-3">
-                  <span className="font-mono text-[11px] uppercase tracking-[0.22em] text-ink2 block">{e.range}</span>
-                  <span className={`mt-2 inline-block font-mono text-[10px] uppercase tracking-[0.2em] border px-2 py-0.5 rounded ${KIND_TONE[e.kind]}`}>
-                    {KIND_LABEL[e.kind]}
-                  </span>
-                </div>
-
-                <div className="sm:col-span-9">
-                  <h4 className="font-display font-bold text-xl sm:text-2xl text-ink leading-tight">{e.role}</h4>
-                  <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted mt-1">{e.org}</p>
-                  <p className="mt-3 text-ink2 text-[15px] leading-relaxed">{e.description}</p>
-                  {e.stack && (
-                    <div className="mt-4 flex flex-wrap gap-1.5">
-                      {e.stack.map((s) => (
-                        <span key={s} className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink2 border border-line px-2 py-1 rounded hover:border-accent hover:text-accent transition-colors">{s}</span>
-                      ))}
-                    </div>
-                  )}
-                </div>
+            <motion.li
+              key={e.when + e.title}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-15% 0px' }}
+              transition={{ duration: 0.6 }}
+              className="relative grid sm:grid-cols-[200px_1fr] gap-2 sm:gap-12 pl-8 sm:pl-0 pb-14 last:pb-0"
+            >
+              <span className={`absolute left-0 sm:left-[192px] top-1.5 w-[15px] h-[15px] rounded-full border-2 ${i === 0 ? 'border-spark bg-spark/30' : 'border-signal bg-night'}`} />
+              <p className="text-[15px] text-muted tnum sm:pt-0.5 sm:pr-8 sm:text-right">{e.when}</p>
+              <div className="sm:pl-2">
+                <h3 className="font-display text-[clamp(1.4rem,2.2vw,1.85rem)] font-semibold leading-tight">{e.title}</h3>
+                <p className="mt-1 text-signal text-[15px]">{e.org}</p>
+                <p className="mt-3 text-soft max-w-[62ch]">{e.body}</p>
               </div>
-            </li>
+            </motion.li>
           ))}
         </ol>
       </div>

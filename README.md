@@ -1,39 +1,32 @@
-# Portfolio — Douglas Floriano Costa
+# Portfólio de Douglas Floriano Costa
 
-Portfolio pessoal construído com **React + Vite + TypeScript + Tailwind + Framer Motion + Three.js (React Three Fiber)**.
+Engenheiro de software e especialista em IA aplicada. Site pessoal com projetos, telas reais e explicação de como cada sistema funciona.
 
-🌐 **Online:** https://douglas-floriano.github.io
+Online: https://douglas-floriano.github.io
 
 ## Stack
 
-- **React 18** + **Vite 8** + **TypeScript**
-- **Tailwind CSS 3** — design system próprio
-- **Framer Motion** — animações
-- **React Three Fiber + Drei** — cena 3D do hero
-- **Lucide** — ícones
+- React 19, Vite e TypeScript
+- Tailwind CSS 3 com tokens próprios (`tailwind.config.js`)
+- Framer Motion para as animações ligadas ao scroll
+- Lenis para rolagem suave
+- Canvas 2D para o campo neural do fundo (`src/components/NeuralField.tsx`)
 
-## Desenvolvimento
+## Rodar
 
 ```bash
 npm install
-npm run dev     # http://localhost:5173
-npm run build   # build de produção em dist/
-npm run preview # servir a build localmente
+npm run dev      # http://localhost:5173
+npm run build    # gera dist/
+npm run preview
 ```
+
+## Onde mexer
+
+- Projetos: `src/data/projects.ts` (próprios) e `src/data/projects-ib.ts` (IB System). `featured: true` coloca o projeto nos casos em destaque.
+- Telas: `public/projects/<slug>/NN-nome.webp`. Capturas em 1440x900 (desktop) ou 390x844 (celular), convertidas com `cwebp -q 80`.
+- Forma do fundo por seção: atributo `data-field` (`sphere`, `helix`, `grid`, `cloud`, `torus`) em cada `<section>`.
 
 ## Deploy
 
-Push na branch `main` dispara o workflow `.github/workflows/deploy.yml`, que builda o projeto e publica no GitHub Pages automaticamente.
-
-## Seções
-
-- **Hero** com cena 3D animada (icosaedro distorcido, anéis orbitais, partículas)
-- **Sobre** — 4 pilares de atuação
-- **Stack** — 5 grupos de tecnologias
-- **Projetos** — Lotemobile, CRM WhatsApp, SistemaBar
-- **Infra** — AWS ECS, RDS, CloudFront, S3, CI/CD
-- **Contato** — email, WhatsApp, LinkedIn, GitHub
-
----
-
-© Douglas Floriano Costa
+Push na `main` dispara `.github/workflows/deploy.yml` e publica no GitHub Pages.
