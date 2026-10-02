@@ -36,7 +36,7 @@ const MARQUEE = ['Laravel', 'React', 'Claude', 'TypeScript', 'AWS', 'Expo', 'Ope
 
 export default function Stack() {
   return (
-    <section id="stack" data-field="cloud" className="relative py-28 overflow-hidden">
+    <section id="stack" data-field="cloud" className="relative py-20 sm:py-24 overflow-hidden">
       <div className="page">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
           <div className="lg:col-span-7">
@@ -66,7 +66,7 @@ export default function Stack() {
         </div>
       </div>
 
-      <div className="mt-20 select-none" aria-hidden>
+      <div className="mt-12 select-none" aria-hidden>
         <div className="marquee flex w-max">
           {[0, 1].map((k) => (
             <div key={k} className="flex shrink-0">

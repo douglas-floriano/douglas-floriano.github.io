@@ -60,7 +60,7 @@ export default function ProjectSheet({ project, onClose }: Props) {
               <p className="mt-3 text-[15px] text-muted">Meu papel: {project.role}</p>
 
               {project.metrics && (
-                <dl className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-px bg-line rounded-2xl overflow-hidden border border-line">
+                <dl className={`mt-8 grid grid-cols-2 ${['', 'sm:grid-cols-1', 'sm:grid-cols-2', 'sm:grid-cols-3', 'sm:grid-cols-4'][Math.min(project.metrics.length, 4)]} gap-px bg-line rounded-2xl overflow-hidden border border-line`}>
                   {project.metrics.map((m) => (
                     <div key={m.label} className="bg-deep px-5 py-5">
                       <dt className="text-[13px] text-muted">{m.label}</dt>

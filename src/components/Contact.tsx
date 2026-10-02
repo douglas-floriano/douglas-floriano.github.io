@@ -23,7 +23,7 @@ export default function Contact() {
   }
 
   return (
-    <section id="contato" data-field="torus" className="relative min-h-[100svh] flex items-center py-28">
+    <section id="contato" data-field="torus" className="relative flex items-center py-24 sm:py-28">
       <div className="page">
         <div className="max-w-4xl mx-auto text-center">
           <p className="kicker">Contato</p>

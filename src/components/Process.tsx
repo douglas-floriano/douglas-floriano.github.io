@@ -31,7 +31,7 @@ function Step({ s, i, total }: { s: (typeof STEPS)[number]; i: number; total: nu
   const x = useTransform(scrollYProgress, [0, 1], [24, 0])
   const width = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
   return (
-    <motion.li ref={ref} style={{ opacity, x }} className="relative py-9">
+    <motion.li ref={ref} style={{ opacity, x }} className="relative py-7">
       <div className="absolute top-0 inset-x-0 h-px bg-line">
         <motion.div style={{ width }} className="h-px bg-signal" />
       </div>
@@ -48,7 +48,7 @@ function Step({ s, i, total }: { s: (typeof STEPS)[number]; i: number; total: nu
 
 export default function Process() {
   return (
-    <section id="processo" data-field="cloud" className="relative py-28">
+    <section id="processo" data-field="cloud" className="relative py-20 sm:py-24">
       <div className="page grid grid-cols-1 lg:grid-cols-12 gap-10">
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-28">

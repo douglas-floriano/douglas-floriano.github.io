@@ -40,14 +40,14 @@ export default function Journey() {
   const h = useTransform(scrollYProgress, [0, 1], ['0%', '100%'])
 
   return (
-    <section id="trajetoria" data-field="cloud" className="relative py-28">
+    <section id="trajetoria" data-field="cloud" className="relative py-20 sm:py-24">
       <div className="page">
         <div className="max-w-3xl">
           <p className="kicker">Trajetória</p>
           <h2 className="mt-4 h-sec text-[clamp(2.4rem,5vw,4.2rem)]">Oito anos colocando sistemas no ar.</h2>
         </div>
 
-        <ol ref={ref} className="relative mt-16 ml-2 sm:ml-0">
+        <ol ref={ref} className="relative mt-12 ml-2 sm:ml-0">
           <div className="absolute left-[7px] sm:left-[199px] top-2 bottom-2 w-px bg-line" aria-hidden>
             <motion.div style={{ height: h }} className="w-px bg-gradient-to-b from-spark to-signal" />
           </div>
@@ -58,7 +58,7 @@ export default function Journey() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-15% 0px' }}
               transition={{ duration: 0.6 }}
-              className="relative grid sm:grid-cols-[200px_1fr] gap-2 sm:gap-12 pl-8 sm:pl-0 pb-14 last:pb-0"
+              className="relative grid sm:grid-cols-[200px_1fr] gap-2 sm:gap-12 pl-8 sm:pl-0 pb-10 last:pb-0"
             >
               <span className={`absolute left-0 sm:left-[192px] top-1.5 w-[15px] h-[15px] rounded-full border-2 ${i === 0 ? 'border-spark bg-spark/30' : 'border-signal bg-night'}`} />
               <p className="text-[15px] text-muted tnum sm:pt-0.5 sm:pr-8 sm:text-right">{e.when}</p>

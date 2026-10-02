@@ -23,7 +23,7 @@ function FeaturedCase({ p, n, onOpen }: { p: Project; n: number; onOpen: () => v
   const label = p.url ? p.url.replace(/^https?:\/\//, '') : p.slug
 
   return (
-    <article className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 py-20 border-t border-line/70 first:border-t-0">
+    <article className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 py-14 border-t border-line/70 first:border-t-0">
       <div className="lg:col-span-5 min-w-0">
         <div className="[@media(min-width:1024px)_and_(min-height:880px)]:sticky lg:top-24">
           <div className="flex items-center gap-4">
@@ -154,7 +154,7 @@ export default function Projects() {
   }, [show])
 
   return (
-    <section id="projetos" data-field="grid" className="relative py-28">
+    <section id="projetos" data-field="grid" className="relative py-20 sm:py-24">
       <div className="page">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end">
           <div className="lg:col-span-7">
@@ -182,7 +182,7 @@ export default function Projects() {
           const rest = g.items.filter((p) => !p.featured)
           const withAI = g.items.filter((p) => p.ai).length
           return (
-            <div key={g.id} id={`projetos-${g.id}`} className="mt-24 scroll-mt-20">
+            <div key={g.id} id={`projetos-${g.id}`} className="mt-16 scroll-mt-20">
               <div className="rounded-3xl border border-line bg-deep/60 p-7 sm:p-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
                 <div className="lg:col-span-7">
                   <h3 className="h-sec text-[clamp(2.2rem,4.6vw,3.8rem)]">{g.title}</h3>
@@ -209,7 +209,7 @@ export default function Projects() {
               </div>
 
               {rest.length > 0 && (
-                <div className="mt-6 pt-14 border-t border-line">
+                <div className="mt-4 pt-10 border-t border-line">
                   <h4 className="font-display text-[1.6rem] font-semibold">Mais {g.id === 'ib' ? 'da IB System' : 'projetos pessoais'}</h4>
                   <p className="mt-1 text-soft">Clique para ver a explicação completa{g.id === 'ib' ? ' e o meu papel em cada um' : ' e as telas'}.</p>
                   <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">

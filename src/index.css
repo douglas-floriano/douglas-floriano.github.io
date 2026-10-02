@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&family=Inter:wght@300..800&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -13,6 +13,10 @@
   --signal: #7C9CFF;
   --spark: #FFC27A;
   color-scheme: dark;
+  --font-display: 'Space Grotesk', ui-sans-serif, sans-serif;
+  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --mega-track: -0.045em;
+  --sec-track: -0.035em;
 }
 
 html { background: var(--night); overflow-x: clip; }
@@ -23,7 +27,7 @@ body {
   margin: 0;
   background: var(--night);
   color: var(--text);
-  font-family: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-body);
   font-size: 17px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
@@ -38,22 +42,20 @@ img { max-width: 100%; display: block; }
 ::-webkit-scrollbar-track { background: var(--night); }
 ::-webkit-scrollbar-thumb { background: #2C355E; border: 3px solid var(--night); border-radius: 99px; }
 
-.font-display { font-family: 'Bricolage Grotesque', ui-sans-serif, sans-serif; font-optical-sizing: auto; }
+.font-display { font-family: var(--font-display); font-optical-sizing: auto; }
 .tnum { font-variant-numeric: tabular-nums; }
 
 /* Títulos: a largura condensa conforme o tamanho, dá personalidade ao tipo */
 .h-mega {
-  font-family: 'Bricolage Grotesque', sans-serif;
+  font-family: var(--font-display);
   font-weight: 700;
-  font-variation-settings: 'wdth' 78;
-  letter-spacing: -0.035em;
+  letter-spacing: var(--mega-track);
   line-height: 0.92;
 }
 .h-sec {
-  font-family: 'Bricolage Grotesque', sans-serif;
+  font-family: var(--font-display);
   font-weight: 650;
-  font-variation-settings: 'wdth' 85;
-  letter-spacing: -0.025em;
+  letter-spacing: var(--sec-track);
   line-height: 1.02;
 }
 

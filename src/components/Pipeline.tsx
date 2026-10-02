@@ -64,7 +64,7 @@ export default function Pipeline() {
   const step = STEPS[active]
 
   return (
-    <section ref={ref} data-field="helix" className="relative" style={{ height: `${STEPS.length * 70 + 40}vh` }} aria-label="Fluxo de um pedido">
+    <section ref={ref} data-field="helix" className="relative" style={{ height: `${STEPS.length * 45 + 60}vh` }} aria-label="Fluxo de um pedido">
       <div className="sticky top-0 min-h-[100svh] flex items-center pt-20 pb-10">
         <div className="page w-full">
           <div className="max-w-3xl">
