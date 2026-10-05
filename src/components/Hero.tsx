@@ -108,7 +108,7 @@ export default function Hero() {
               sempre com uma pessoa aprovando o que importa.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <button onClick={() => scrollToId('projetos')} className="btn btn-main">
+              <button onClick={() => scrollToId('destaques')} className="btn btn-main">
                 Ver projetos <ArrowDown size={16} />
               </button>
               <a href="/cv-douglas-floriano-costa.pdf" download className="btn btn-line">

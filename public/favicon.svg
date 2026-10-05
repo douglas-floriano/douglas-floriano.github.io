@@ -1,10 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
-  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC27A"/><stop offset="1" stop-color="#F08A4B"/></linearGradient></defs>
-  <rect width="40" height="40" rx="11" fill="url(#g)"/>
-  <g stroke="#0A0F1E" stroke-width="2.2" stroke-linecap="round">
-    <line x1="20" y1="9" x2="20" y2="21"/><line x1="10" y1="28" x2="20" y2="21"/><line x1="30" y1="28" x2="20" y2="21"/>
-    <g opacity=".55"><line x1="20" y1="9" x2="10" y2="28"/><line x1="20" y1="9" x2="30" y2="28"/><line x1="10" y1="28" x2="30" y2="28"/></g>
-  </g>
-  <g fill="#0A0F1E"><circle cx="20" cy="9" r="3.4"/><circle cx="10" cy="28" r="3.4"/><circle cx="30" cy="28" r="3.4"/></g>
-  <circle cx="20" cy="21" r="4.8" fill="#ECEAF5"/>
+  <rect width="40" height="40" rx="11" fill="#161D3D"/>
+  <text x="6" y="28.5" font-family="Space Grotesk, Arial, Helvetica, sans-serif" font-weight="700" font-size="22" letter-spacing="-1.6" fill="#ECEAF5">df</text>
+  <circle cx="33" cy="26.5" r="3" fill="#FFC27A"/>
 </svg>

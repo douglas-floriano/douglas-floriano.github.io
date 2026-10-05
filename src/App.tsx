@@ -3,6 +3,7 @@ import NeuralField from './components/NeuralField'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Statement from './components/Statement'
+import Showcase from './components/Showcase'
 import AISection from './components/AISection'
 import Pipeline from './components/Pipeline'
 import Projects from './components/Projects'
@@ -26,6 +27,7 @@ export default function App() {
       <Nav />
       <main className="relative z-10">
         <Hero />
+        <Showcase />
         <Statement />
         <AISection />
         <Pipeline />

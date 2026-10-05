@@ -27,3 +27,8 @@ export function lockScroll(lock: boolean) {
   }
   document.documentElement.style.overflow = lock ? 'hidden' : ''
 }
+
+export function scrollToY(y: number) {
+  if (lenis) lenis.scrollTo(y)
+  else window.scrollTo({ top: y, behavior: 'smooth' })
+}
