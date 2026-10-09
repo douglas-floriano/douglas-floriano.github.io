@@ -1,0 +1,5 @@
+export const EMAIL = 'douglas198.floriano@hotmail.com'
+export const WHATSAPP = 'https://wa.me/5516991816628'
+export const GITHUB = 'https://github.com/douglas-floriano'
+export const LINKEDIN = 'https://www.linkedin.com/in/douglas-costa-b581ab1a1/'
+export const CV = '/cv-douglas-floriano-costa.pdf'

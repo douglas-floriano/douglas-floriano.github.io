@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
-  <rect width="40" height="40" rx="11" fill="#161D3D"/>
-  <text x="6" y="28.5" font-family="Space Grotesk, Arial, Helvetica, sans-serif" font-weight="700" font-size="22" letter-spacing="-1.6" fill="#ECEAF5">df</text>
-  <circle cx="33" cy="26.5" r="3" fill="#FFC27A"/>
+  <rect width="40" height="40" rx="9" fill="#1a1916"/>
+  <text x="6" y="28.5" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="22" letter-spacing="-1.6" fill="#eeeae2">df</text>
+  <circle cx="33" cy="26.5" r="3" fill="#e9a23b"/>
 </svg>
