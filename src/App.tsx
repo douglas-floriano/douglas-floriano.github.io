@@ -1,43 +1,43 @@
 import { useEffect } from 'react'
+import NeuralField from './components/NeuralField'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
-import Cases from './components/Cases'
-import Others from './components/Others'
-import HowIWork from './components/HowIWork'
+import Statement from './components/Statement'
+import Showcase from './components/Showcase'
+import AISection from './components/AISection'
+import Pipeline from './components/Pipeline'
+import Projects from './components/Projects'
+import Process from './components/Process'
 import Stack from './components/Stack'
 import Journey from './components/Journey'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
+import { startSmoothScroll } from './lib/smooth'
 
 export default function App() {
-  // links antigos no formato #projeto/slug levam para o case correspondente
   useEffect(() => {
-    const m = window.location.hash.match(/^#projeto\/(.+)$/)
-    if (!m) return
-    const slug = decodeURIComponent(m[1]) === 'loteia' ? 'lotemobile' : decodeURIComponent(m[1])
-    const el = document.getElementById(slug)
-    if (el) {
-      history.replaceState(null, '', `#${slug}`)
-      el.scrollIntoView()
-    }
+    const lenis = startSmoothScroll()
+    return () => lenis?.destroy()
   }, [])
 
   return (
     <>
-      <a href="#projetos" className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[90] focus:bg-amber focus:text-bg focus:px-3 focus:py-2 focus:rounded">
-        Pular para os projetos
-      </a>
+      <NeuralField />
+      <div aria-hidden className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_top,rgba(124,156,255,0.10),transparent_60%)]" />
       <Nav />
-      <main>
+      <main className="relative z-10">
         <Hero />
-        <Cases />
-        <Others />
-        <HowIWork />
+        <Showcase />
+        <Statement />
+        <AISection />
+        <Pipeline />
+        <Projects />
+        <Process />
         <Stack />
         <Journey />
         <Contact />
       </main>
-      <Footer />
+      <div className="relative z-10"><Footer /></div>
     </>
   )
 }
