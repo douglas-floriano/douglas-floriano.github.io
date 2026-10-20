@@ -19,10 +19,10 @@ function Cover({ p, onZoom }: { p: Project; onZoom: (i: number) => void }) {
     return (
       <button onClick={() => onZoom(p.shots.indexOf(desk))} className="group block w-full [perspective:1600px]" aria-label={`Ampliar: ${desk.caption}`}>
         <div className="shot-frame transition-transform duration-700 [transform:rotateY(-9deg)_rotateX(4deg)] group-hover:[transform:rotateY(0deg)_rotateX(0deg)]">
-          <div className="flex items-center gap-1.5 px-3.5 h-8 border-b border-[#2A3360] bg-[#10162F]">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#2E3766]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#2E3766]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#2E3766]" />
+          <div className="flex items-center gap-1.5 px-3.5 h-8 border-b border-[#262E3C] bg-[#10141C]">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#2A3242]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#2A3242]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#2A3242]" />
             <span className="ml-3 text-[12px] text-muted truncate">{p.url ? p.url.replace(/^https?:\/\//, '') : p.slug}</span>
           </div>
           <img src={desk.src} alt={desk.caption} className="w-full aspect-[16/10] object-cover object-top" />
@@ -35,7 +35,7 @@ function Cover({ p, onZoom }: { p: Project; onZoom: (i: number) => void }) {
       <div className="flex justify-center items-end gap-6 [perspective:1600px]">
         {phones.map((s, i) => (
           <button key={s.src} onClick={() => onZoom(p.shots.indexOf(s))} aria-label={`Ampliar: ${s.caption}`}
-            className={`w-[44%] max-w-[260px] rounded-[2.4rem] border border-[#2A3360] bg-[#0D1228] p-2 shadow-[0_50px_100px_-30px_rgba(3,6,20,.95)] transition-transform duration-700 hover:-translate-y-2 ${i === 0 ? '[transform:rotateY(12deg)]' : '[transform:rotateY(-12deg)] translate-y-10'}`}>
+            className={`w-[44%] max-w-[260px] rounded-[2.4rem] border border-[#262E3C] bg-[#0E1118] p-2 shadow-[0_50px_100px_-30px_rgba(5, 7, 11,.95)] transition-transform duration-700 hover:-translate-y-2 ${i === 0 ? '[transform:rotateY(12deg)]' : '[transform:rotateY(-12deg)] translate-y-10'}`}>
             <img src={s.src} alt={s.caption} className="rounded-[1.9rem] w-full aspect-[390/844] object-cover object-top" />
           </button>
         ))}
@@ -116,7 +116,7 @@ export default function ProjectSheet({ project, onClose }: Props) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
         >
-          <div aria-hidden className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,rgba(124,156,255,0.16),transparent_55%)]" />
+          <div aria-hidden className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_top_right,rgba(46,139,255,0.16),transparent_55%)]" />
           <div ref={scroller} className="relative h-full overflow-y-auto overscroll-contain" data-lenis-prevent>
             {/* barra do caso */}
             <div className="sticky top-0 z-20 glass border-b border-line/70">

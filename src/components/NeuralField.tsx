@@ -183,7 +183,7 @@ export default function NeuralField() {
         for (let k = 0; k < nb.length; k++) {
           const j = nb[k]
           const depth = (2 - (proj[i * 3 + 2] + proj[j * 3 + 2])) / 4
-          ctx.strokeStyle = `rgba(124,156,255,${(0.05 + depth * 0.22) * A})`
+          ctx.strokeStyle = `rgba(46,139,255,${(0.05 + depth * 0.22) * A})`
           ctx.beginPath()
           ctx.moveTo(proj[i * 3], proj[i * 3 + 1])
           ctx.lineTo(proj[j * 3], proj[j * 3 + 1])
@@ -195,7 +195,7 @@ export default function NeuralField() {
         const z = proj[i * 3 + 2]
         const depth = (1 - z) / 2
         const r = 0.6 + depth * 1.6
-        ctx.fillStyle = `rgba(214,222,255,${(0.25 + depth * 0.6) * A})`
+        ctx.fillStyle = `rgba(220,230,245,${(0.25 + depth * 0.6) * A})`
         ctx.beginPath()
         ctx.arc(proj[i * 3], proj[i * 3 + 1], r, 0, Math.PI * 2)
         ctx.fill()
@@ -214,8 +214,8 @@ export default function NeuralField() {
           const x = proj[s.a * 3] + (proj[s.b * 3] - proj[s.a * 3]) * s.t
           const y = proj[s.a * 3 + 1] + (proj[s.b * 3 + 1] - proj[s.a * 3 + 1]) * s.t
           const g = ctx.createRadialGradient(x, y, 0, x, y, 7)
-          g.addColorStop(0, `rgba(255,194,122,${0.95 * A})`)
-          g.addColorStop(1, 'rgba(255,194,122,0)')
+          g.addColorStop(0, `rgba(125,182,255,${0.95 * A})`)
+          g.addColorStop(1, 'rgba(125,182,255,0)')
           ctx.fillStyle = g
           ctx.beginPath()
           ctx.arc(x, y, 7, 0, Math.PI * 2)

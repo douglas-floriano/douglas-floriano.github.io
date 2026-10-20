@@ -21,10 +21,10 @@ function Screen({ p }: { p: Project }) {
   if (desk) {
     return (
       <div className="shot-frame">
-        <div className="flex items-center gap-1.5 px-3.5 h-8 border-b border-[#2A3360] bg-[#10162F]">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#2E3766]" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[#2E3766]" />
-          <span className="w-2.5 h-2.5 rounded-full bg-[#2E3766]" />
+        <div className="flex items-center gap-1.5 px-3.5 h-8 border-b border-[#262E3C] bg-[#10141C]">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#2A3242]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#2A3242]" />
+          <span className="w-2.5 h-2.5 rounded-full bg-[#2A3242]" />
           <span className="ml-3 text-[12px] text-muted truncate">{p.url ? p.url.replace(/^https?:\/\//, '') : p.slug}</span>
         </div>
         <img src={desk.src} alt={desk.caption} className="w-full aspect-[16/10] object-cover object-top" />
@@ -34,7 +34,7 @@ function Screen({ p }: { p: Project }) {
   return (
     <div className="flex justify-center items-end gap-6 h-full">
       {phones.map((s, i) => (
-        <div key={s.src} className={`w-[42%] max-w-[250px] rounded-[2.2rem] border border-[#2A3360] bg-[#0D1228] p-2 shadow-[0_40px_80px_-30px_rgba(3,6,20,.9)] ${i === 1 ? 'translate-y-8' : ''}`}>
+        <div key={s.src} className={`w-[42%] max-w-[250px] rounded-[2.2rem] border border-[#262E3C] bg-[#0E1118] p-2 shadow-[0_40px_80px_-30px_rgba(5, 7, 11,.9)] ${i === 1 ? 'translate-y-8' : ''}`}>
           <img src={s.src} alt={s.caption} className="rounded-[1.7rem] w-full aspect-[390/844] object-cover object-top" />
         </div>
       ))}

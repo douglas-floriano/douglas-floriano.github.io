@@ -23,7 +23,7 @@ export default function App() {
   return (
     <>
       <NeuralField />
-      <div aria-hidden className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_top,rgba(124,156,255,0.10),transparent_60%)]" />
+      <div aria-hidden className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_top,rgba(46,139,255,0.10),transparent_60%)]" />
       <Nav />
       <main className="relative z-10">
         <Hero />

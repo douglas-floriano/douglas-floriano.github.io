@@ -50,7 +50,7 @@ export default function Stack() {
 
         <div className="mt-14 grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-line rounded-3xl overflow-hidden border border-line">
           {GROUPS.map((g) => (
-            <div key={g.title} className={`p-7 sm:p-8 ${g.hot ? 'bg-[#16183A]' : 'bg-deep/90'}`}>
+            <div key={g.title} className={`p-7 sm:p-8 ${g.hot ? 'bg-[#141821]' : 'bg-deep/90'}`}>
               <h3 className={`font-display text-[1.35rem] font-semibold ${g.hot ? 'text-spark' : ''}`}>{g.title}</h3>
               <p className="mt-1 text-[14px] text-muted">{g.note}</p>
               <ul className="mt-5 space-y-2">
@@ -71,7 +71,7 @@ export default function Stack() {
           {[0, 1].map((k) => (
             <div key={k} className="flex shrink-0">
               {MARQUEE.map((m) => (
-                <span key={m + k} className="h-mega text-[clamp(3rem,8vw,6.5rem)] px-8 text-transparent [-webkit-text-stroke:1px_#2E3766]">{m}</span>
+                <span key={m + k} className="h-mega text-[clamp(3rem,8vw,6.5rem)] px-8 text-transparent [-webkit-text-stroke:1px_#2A3242]">{m}</span>
               ))}
             </div>
           ))}
